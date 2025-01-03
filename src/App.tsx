@@ -26,6 +26,14 @@ import React from 'react';
     import PartnersPage from './pages/PartnersPage';
     import StoresPage from './pages/StoresPage';
     import GiftCardsPage from './pages/GiftCardsPage';
+    import PricingPage from './pages/PricingPage';
+    import BrokerSupportPage from './pages/BrokerSupportPage';
+    import AutomatedJournalingPage from './pages/features/AutomatedJournalingPage';
+    import TradeAnalysisPage from './pages/features/TradeAnalysisPage';
+    import ReportingPage from './pages/features/ReportingPage';
+    import PlaybooksPage from './pages/features/PlaybooksPage';
+    import BacktestingPage from './pages/features/BacktestingPage';
+    import BrokerIntegrationPage from './pages/features/BrokerIntegrationPage';
     
     function App() {
       return (
@@ -61,6 +69,14 @@ import React from 'react';
               <Route path="/partners" element={<PartnersPage />} />
               <Route path="/stores" element={<StoresPage />} />
               <Route path="/gift-cards" element={<GiftCardsPage />} />
+              <Route path="/pricing" element={<PricingPage />} />
+              <Route path="/broker-support" element={<BrokerSupportPage />} />
+              <Route path="/features/journaling" element={<AutomatedJournalingPage />} />
+              <Route path="/features/analysis" element={<TradeAnalysisPage />} />
+              <Route path="/features/reporting" element={<ReportingPage />} />
+              <Route path="/features/playbooks" element={<PlaybooksPage />} />
+              <Route path="/features/backtesting" element={<BacktestingPage />} />
+              <Route path="/features/broker-integration" element={<BrokerIntegrationPage />} />
             </Routes>
             <Footer />
           </div>
