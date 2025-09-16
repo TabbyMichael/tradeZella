@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
     import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
     import Navbar from './components/Navbar';
+    import Loader from './components/Loader';
     import Hero from './components/Hero';
     import Stats from './components/Stats';
     import Features from './components/sections/Features';
@@ -36,9 +37,19 @@ import React from 'react';
     import BrokerIntegrationPage from './pages/features/BrokerIntegrationPage';
     
     function App() {
+      const [loading, setLoading] = useState(true);
+
+      useEffect(() => {
+        const timer = setTimeout(() => {
+          setLoading(false);
+        }, 1500); // Simulate a 1.5-second loading time
+        return () => clearTimeout(timer);
+      }, []);
+
       return (
         <Router>
           <div className="min-h-screen bg-white">
+            {loading && <Loader />}
             <Navbar />
             <Routes>
               <Route path="/" element={

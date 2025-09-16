@@ -2,7 +2,7 @@ import { UserModel } from '../models/user.model.js';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 
-const JWT_SECRET = process.env.JWT_SECRET;
+const JWT_SECRET = process.env.NODE_ENV === 'test' ? 'test-secret' : process.env.JWT_SECRET;
 
 export class AuthService {
   static async register({ email, password }) {

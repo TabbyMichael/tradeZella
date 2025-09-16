@@ -5,8 +5,6 @@ import { initDb } from './db.js';
 import authRouter from './routes/auth.routes.js';
 import errorHandler from './middleware/errorHandler.js';
 
-dotenv.config();
-
 const app = express();
 const port = 3001;
 
