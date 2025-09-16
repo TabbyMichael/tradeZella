@@ -1,9 +1,25 @@
-import { Low } from 'lowdb';
-import { JSONFile } from 'lowdb/node';
+import sqlite3 from 'sqlite3';
+import { open } from 'sqlite';
 
-// Configure lowdb to use a JSON file for storage
-const adapter = new JSONFile('db.json');
-const defaultData = { users: [], trades: [] };
-const db = new Low(adapter, defaultData);
+let db;
 
-export default db;
+export async function getDb() {
+  if (!db) {
+    db = await open({
+      filename: process.env.NODE_ENV === 'test' ? ':memory:' : './database.sqlite',
+      driver: sqlite3.Database,
+    });
+  }
+  return db;
+}
+
+export async function initDb() {
+  const db = await getDb();
+  await db.exec(`
+    CREATE TABLE IF NOT EXISTS users (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      email TEXT UNIQUE,
+      password TEXT
+    )
+  `);
+}
