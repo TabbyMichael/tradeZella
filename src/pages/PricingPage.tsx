@@ -51,7 +51,7 @@ const plans = [
 
 export default function PricingPage() {
   return (
-    <div className="py-24 bg-gray-50">
+    <div className="py-24 bg-gray-50 dark:bg-navy-900">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <SectionHeading
           title="Pricing"
@@ -66,7 +66,7 @@ export default function PricingPage() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: index * 0.1 }}
-              className={`relative bg-white rounded-2xl shadow-lg p-8 flex flex-col transform hover:-translate-y-2 transition-transform duration-300 ${plan.recommended ? 'border-4 border-purple-600' : 'border border-gray-200'}`}
+              className={`relative bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-8 flex flex-col transform hover:-translate-y-2 transition-transform duration-300 ${plan.recommended ? 'border-4 border-purple-600' : 'border border-gray-200 dark:border-gray-700'}`}
             >
               {plan.recommended && (
                 <div className="absolute top-0 -translate-y-1/2 left-1/2 -translate-x-1/2">
@@ -75,16 +75,16 @@ export default function PricingPage() {
                   </span>
                 </div>
               )}
-              <h3 className="text-2xl font-bold text-center">{plan.name}</h3>
-              <p className="mt-2 text-gray-600 text-center h-12">{plan.description}</p>
-              <p className="mt-6 text-5xl font-bold text-center">
-                {plan.price}<span className="text-lg font-medium text-gray-500">/month</span>
+              <h3 className="text-2xl font-bold text-center dark:text-white">{plan.name}</h3>
+              <p className="mt-2 text-gray-600 dark:text-gray-400 text-center h-12">{plan.description}</p>
+              <p className="mt-6 text-5xl font-bold text-center dark:text-white">
+                {plan.price}<span className="text-lg font-medium text-gray-500 dark:text-gray-400">/month</span>
               </p>
               <ul className="mt-8 space-y-4 flex-grow">
                 {plan.features.map((feature) => (
                   <li key={feature} className="flex items-center">
                     <Check className="flex-shrink-0 w-6 h-6 text-green-500" />
-                    <span className="ml-3 text-gray-600">{feature}</span>
+                    <span className="ml-3 text-gray-600 dark:text-gray-300">{feature}</span>
                   </li>
                 ))}
               </ul>
