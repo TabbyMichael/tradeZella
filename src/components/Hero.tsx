@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Notebook, LineChart, BarChart2, Play, RefreshCw, FileText } from 'lucide-react';
 import Button from './common/Button';
+import { motion } from 'framer-motion';
 
 const features = [
   { icon: Notebook, label: 'Journal' },
@@ -12,6 +13,15 @@ const features = [
 ];
 
 export default function Hero() {
+  const [highlightedIndex, setHighlightedIndex] = useState(0);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setHighlightedIndex((prevIndex) => (prevIndex + 1) % features.length);
+    }, 2000);
+    return () => clearInterval(interval);
+  }, []);
+
   return (
     <div className="pt-24 pb-16 bg-gradient-to-b from-white to-gray-50 dark:from-gray-900 dark:to-navy-900">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -32,12 +42,17 @@ export default function Hero() {
           
           <div className="mt-16 grid grid-cols-6 gap-8 justify-items-center">
             {features.map((Feature, index) => (
-              <div key={index} className="text-center">
-                <div className={`${Feature.dark ? 'bg-navy-900' : 'bg-white dark:bg-gray-800'} p-4 rounded-lg shadow-sm`}>
-                  <Feature.icon className={`h-6 w-6 ${Feature.dark ? 'text-white' : 'text-gray-700 dark:text-gray-300'}`} />
+              <motion.div
+                key={index}
+                className="text-center"
+                animate={{ scale: highlightedIndex === index ? 1.1 : 1 }}
+                transition={{ duration: 0.5 }}
+              >
+                <div className={`${highlightedIndex === index ? 'bg-purple-600' : (Feature.dark ? 'bg-navy-900' : 'bg-white dark:bg-gray-800')} p-4 rounded-lg shadow-sm`}>
+                  <Feature.icon className={`h-6 w-6 ${highlightedIndex === index ? 'text-white' : (Feature.dark ? 'text-white' : 'text-gray-700 dark:text-gray-300')}`} />
                 </div>
                 <p className="mt-2 text-sm dark:text-gray-300">{Feature.label}</p>
-              </div>
+              </motion.div>
             ))}
           </div>
         </div>
