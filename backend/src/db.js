@@ -19,7 +19,11 @@ export async function initDb() {
     CREATE TABLE IF NOT EXISTS users (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       email TEXT UNIQUE,
-      password TEXT
+      password TEXT,
+      name TEXT,
+      googleId TEXT,
+      passwordResetToken TEXT,
+      passwordResetExpires DATETIME
     )
   `);
 }
