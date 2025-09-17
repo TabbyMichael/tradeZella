@@ -35,6 +35,11 @@ import React, { useState, useEffect } from 'react';
     import PlaybooksPage from './pages/features/PlaybooksPage';
     import BacktestingPage from './pages/features/BacktestingPage';
     import BrokerIntegrationPage from './pages/features/BrokerIntegrationPage';
+    import LoginPage from './pages/LoginPage';
+    import SignupPage from './pages/SignupPage';
+    import ForgotPasswordPage from './pages/ForgotPasswordPage';
+    import OAuthCallbackPage from './pages/OAuthCallbackPage';
+    import ResetPasswordPage from './pages/ResetPasswordPage';
     
     function App() {
       const [loading, setLoading] = useState(true);
@@ -88,6 +93,11 @@ import React, { useState, useEffect } from 'react';
               <Route path="/features/playbooks" element={<PlaybooksPage />} />
               <Route path="/features/backtesting" element={<BacktestingPage />} />
               <Route path="/features/broker-integration" element={<BrokerIntegrationPage />} />
+              <Route path="/login" element={<LoginPage />} />
+              <Route path="/signup" element={<SignupPage />} />
+              <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+              <Route path="/oauth/callback" element={<OAuthCallbackPage />} />
+              <Route path="/reset-password/:token" element={<ResetPasswordPage />} />
             </Routes>
             <Footer />
           </div>

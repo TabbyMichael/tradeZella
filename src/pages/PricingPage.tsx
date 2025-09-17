@@ -1,62 +1,100 @@
 import React from 'react';
-    import SectionHeading from '../components/common/SectionHeading';
-    
-    export default function PricingPage() {
-      return (
-        <div className="py-24 bg-white">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <SectionHeading
-              title="Pricing"
-              description="Choose the plan that's right for you. We offer flexible subscription options to meet your needs."
-              centered
-            />
-            
-            <div className="mt-12">
-              <h2 className="text-3xl font-bold mb-6">Subscription Plans</h2>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                <div className="bg-gray-50 p-6 rounded-lg shadow-md">
-                  <h3 className="text-xl font-bold mb-2">Basic</h3>
-                  <p className="text-gray-600 mb-4">
-                    Ideal for beginners.
-                  </p>
-                  <p className="text-2xl font-bold mb-4">$19/month</p>
-                  <ul className="list-disc list-inside text-gray-600">
-                    <li>Access to basic features</li>
-                    <li>Limited trade journaling</li>
-                    <li>Basic reporting</li>
-                  </ul>
+import SectionHeading from '../components/common/SectionHeading';
+import Button from '../components/common/Button';
+import { Check } from 'lucide-react';
+import { Link } from 'react-router-dom';
+
+const plans = [
+  {
+    name: 'Basic',
+    price: '$19',
+    description: 'Ideal for beginners.',
+    features: [
+      'Access to basic features',
+      'Limited trade journaling',
+      'Basic reporting',
+    ],
+    buttonVariant: 'primary',
+    link: '/signup',
+  },
+  {
+    name: 'Pro',
+    price: '$49',
+    description: 'For serious traders.',
+    features: [
+      'Access to all features',
+      'Unlimited trade journaling',
+      'Advanced reporting',
+      'Playbooks',
+    ],
+    buttonVariant: 'gradient',
+    recommended: true,
+    link: '/signup',
+  },
+  {
+    name: 'Premium',
+    price: '$99',
+    description: 'For professional traders.',
+    features: [
+      'Access to all features',
+      'Unlimited trade journaling',
+      'Advanced reporting',
+      'Playbooks',
+      'Backtesting',
+      'Priority support',
+    ],
+    buttonVariant: 'primary',
+    link: '/signup',
+  },
+];
+
+export default function PricingPage() {
+  return (
+    <div className="py-24 bg-gray-50">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <SectionHeading
+          title="Pricing"
+          description="Choose the plan that's right for you. We offer flexible subscription options to meet your needs."
+          centered
+        />
+
+        <div className="mt-16 grid grid-cols-1 md:grid-cols-3 gap-8">
+          {plans.map((plan) => (
+            <div
+              key={plan.name}
+              className={`relative bg-white rounded-2xl shadow-lg p-8 flex flex-col transform hover:-translate-y-2 transition-transform duration-300 ${plan.recommended ? 'border-4 border-purple-600' : 'border border-gray-200'}`}
+            >
+              {plan.recommended && (
+                <div className="absolute top-0 -translate-y-1/2 left-1/2 -translate-x-1/2">
+                  <span className="bg-purple-600 text-white px-3 py-1 text-sm font-semibold tracking-wide rounded-full uppercase">
+                    Most Popular
+                  </span>
                 </div>
-                <div className="bg-gray-50 p-6 rounded-lg shadow-md">
-                  <h3 className="text-xl font-bold mb-2">Pro</h3>
-                  <p className="text-gray-600 mb-4">
-                    For serious traders.
-                  </p>
-                  <p className="text-2xl font-bold mb-4">$49/month</p>
-                  <ul className="list-disc list-inside text-gray-600">
-                    <li>Access to all features</li>
-                    <li>Unlimited trade journaling</li>
-                    <li>Advanced reporting</li>
-                    <li>Playbooks</li>
-                  </ul>
-                </div>
-                <div className="bg-gray-50 p-6 rounded-lg shadow-md">
-                  <h3 className="text-xl font-bold mb-2">Premium</h3>
-                  <p className="text-gray-600 mb-4">
-                    For professional traders.
-                  </p>
-                  <p className="text-2xl font-bold mb-4">$99/month</p>
-                  <ul className="list-disc list-inside text-gray-600">
-                    <li>Access to all features</li>
-                    <li>Unlimited trade journaling</li>
-                    <li>Advanced reporting</li>
-                    <li>Playbooks</li>
-                    <li>Backtesting</li>
-                    <li>Priority support</li>
-                  </ul>
-                </div>
+              )}
+              <h3 className="text-2xl font-bold text-center">{plan.name}</h3>
+              <p className="mt-2 text-gray-600 text-center h-12">{plan.description}</p>
+              <p className="mt-6 text-5xl font-bold text-center">
+                {plan.price}<span className="text-lg font-medium text-gray-500">/month</span>
+              </p>
+              <ul className="mt-8 space-y-4 flex-grow">
+                {plan.features.map((feature) => (
+                  <li key={feature} className="flex items-center">
+                    <Check className="flex-shrink-0 w-6 h-6 text-green-500" />
+                    <span className="ml-3 text-gray-600">{feature}</span>
+                  </li>
+                ))}
+              </ul>
+              <div className="mt-8">
+                <Link to={plan.link}>
+                  <Button variant={plan.buttonVariant as 'primary' | 'gradient'} className="w-full">
+                    Get Started
+                  </Button>
+                </Link>
               </div>
             </div>
-          </div>
+          ))}
         </div>
-      );
-    }
+      </div>
+    </div>
+  );
+}
