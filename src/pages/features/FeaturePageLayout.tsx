@@ -9,7 +9,7 @@ interface FeaturePageLayoutProps {
 
 const FeaturePageLayout: React.FC<FeaturePageLayoutProps> = ({ title, description, image, children }) => {
   return (
-    <div className="bg-white">
+    <div className="bg-white dark:bg-gray-900">
       <div className="relative">
         <img src={image} alt={title} className="w-full h-96 object-cover" />
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent" />
