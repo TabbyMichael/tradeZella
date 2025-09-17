@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-    import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+    import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
     import Navbar from './components/Navbar';
     import Loader from './components/Loader';
     import Hero from './components/Hero';
@@ -40,67 +40,76 @@ import React, { useState, useEffect } from 'react';
     import ForgotPasswordPage from './pages/ForgotPasswordPage';
     import OAuthCallbackPage from './pages/OAuthCallbackPage';
     import ResetPasswordPage from './pages/ResetPasswordPage';
-    
-    function App() {
-      const [loading, setLoading] = useState(true);
+    import { LoadingProvider, useLoading } from './components/common/LoadingContext';
+
+    function AppContent() {
+      const { isLoading, setIsLoading } = useLoading();
+      const location = useLocation();
 
       useEffect(() => {
-        const timer = setTimeout(() => {
-          setLoading(false);
-        }, 1500); // Simulate a 1.5-second loading time
+        setIsLoading(true);
+        const timer = setTimeout(() => setIsLoading(false), 500); // Simulate loading
         return () => clearTimeout(timer);
-      }, []);
+      }, [location.pathname, setIsLoading]);
 
       return (
+        <div className="min-h-screen bg-white">
+          {isLoading && <Loader />}
+          <Navbar />
+          <Routes>
+            <Route path="/" element={
+              <>
+                <Hero />
+                <Stats />
+                <Features />
+                <Analysis />
+                <Reports />
+                <Playbooks />
+                <Backtesting />
+                <Newsletter />
+              </>
+            } />
+            <Route path="/about" element={<AboutPage />} />
+            <Route path="/careers" element={<CareersPage />} />
+            <Route path="/press" element={<PressPage />} />
+            <Route path="/blog" element={<BlogPage />} />
+            <Route path="/contact" element={<ContactPage />} />
+            <Route path="/faq" element={<FAQPage />} />
+            <Route path="/help" element={<HelpPage />} />
+            <Route path="/returns" element={<ReturnsPage />} />
+            <Route path="/terms" element={<TermsPage />} />
+            <Route path="/privacy" element={<PrivacyPage />} />
+            <Route path="/cookies" element={<CookiesPage />} />
+            <Route path="/accessibility" element={<AccessibilityPage />} />
+            <Route path="/community" element={<CommunityPage />} />
+            <Route path="/partners" element={<PartnersPage />} />
+            <Route path="/stores" element={<StoresPage />} />
+            <Route path="/gift-cards" element={<GiftCardsPage />} />
+            <Route path="/pricing" element={<PricingPage />} />
+            <Route path="/broker-support" element={<BrokerSupportPage />} />
+            <Route path="/features/journaling" element={<AutomatedJournalingPage />} />
+            <Route path="/features/analysis" element={<TradeAnalysisPage />} />
+            <Route path="/features/reporting" element={<ReportingPage />} />
+            <Route path="/features/playbooks" element={<PlaybooksPage />} />
+            <Route path="/features/backtesting" element={<BacktestingPage />} />
+            <Route path="/features/broker-integration" element={<BrokerIntegrationPage />} />
+            <Route path="/login" element={<LoginPage />} />
+            <Route path="/signup" element={<SignupPage />} />
+            <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+            <Route path="/oauth/callback" element={<OAuthCallbackPage />} />
+            <Route path="/reset-password/:token" element={<ResetPasswordPage />} />
+          </Routes>
+          <Footer />
+        </div>
+      );
+    }
+
+    function App() {
+      return (
         <Router>
-          <div className="min-h-screen bg-white">
-            {loading && <Loader />}
-            <Navbar />
-            <Routes>
-              <Route path="/" element={
-                <>
-                  <Hero />
-                  <Stats />
-                  <Features />
-                  <Analysis />
-                  <Reports />
-                  <Playbooks />
-                  <Backtesting />
-                  <Newsletter />
-                </>
-              } />
-              <Route path="/about" element={<AboutPage />} />
-              <Route path="/careers" element={<CareersPage />} />
-              <Route path="/press" element={<PressPage />} />
-              <Route path="/blog" element={<BlogPage />} />
-              <Route path="/contact" element={<ContactPage />} />
-              <Route path="/faq" element={<FAQPage />} />
-              <Route path="/help" element={<HelpPage />} />
-              <Route path="/returns" element={<ReturnsPage />} />
-              <Route path="/terms" element={<TermsPage />} />
-              <Route path="/privacy" element={<PrivacyPage />} />
-              <Route path="/cookies" element={<CookiesPage />} />
-              <Route path="/accessibility" element={<AccessibilityPage />} />
-              <Route path="/community" element={<CommunityPage />} />
-              <Route path="/partners" element={<PartnersPage />} />
-              <Route path="/stores" element={<StoresPage />} />
-              <Route path="/gift-cards" element={<GiftCardsPage />} />
-              <Route path="/pricing" element={<PricingPage />} />
-              <Route path="/broker-support" element={<BrokerSupportPage />} />
-              <Route path="/features/journaling" element={<AutomatedJournalingPage />} />
-              <Route path="/features/analysis" element={<TradeAnalysisPage />} />
-              <Route path="/features/reporting" element={<ReportingPage />} />
-              <Route path="/features/playbooks" element={<PlaybooksPage />} />
-              <Route path="/features/backtesting" element={<BacktestingPage />} />
-              <Route path="/features/broker-integration" element={<BrokerIntegrationPage />} />
-              <Route path="/login" element={<LoginPage />} />
-              <Route path="/signup" element={<SignupPage />} />
-              <Route path="/forgot-password" element={<ForgotPasswordPage />} />
-              <Route path="/oauth/callback" element={<OAuthCallbackPage />} />
-              <Route path="/reset-password/:token" element={<ResetPasswordPage />} />
-            </Routes>
-            <Footer />
-          </div>
+          <LoadingProvider>
+            <AppContent />
+          </LoadingProvider>
         </Router>
       );
     }

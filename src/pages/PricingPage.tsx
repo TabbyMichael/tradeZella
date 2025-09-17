@@ -3,6 +3,7 @@ import SectionHeading from '../components/common/SectionHeading';
 import Button from '../components/common/Button';
 import { Check } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { motion } from 'framer-motion';
 
 const plans = [
   {
@@ -59,9 +60,12 @@ export default function PricingPage() {
         />
 
         <div className="mt-16 grid grid-cols-1 md:grid-cols-3 gap-8">
-          {plans.map((plan) => (
-            <div
+          {plans.map((plan, index) => (
+            <motion.div
               key={plan.name}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: index * 0.1 }}
               className={`relative bg-white rounded-2xl shadow-lg p-8 flex flex-col transform hover:-translate-y-2 transition-transform duration-300 ${plan.recommended ? 'border-4 border-purple-600' : 'border border-gray-200'}`}
             >
               {plan.recommended && (
@@ -91,7 +95,7 @@ export default function PricingPage() {
                   </Button>
                 </Link>
               </div>
-            </div>
+            </motion.div>
           ))}
         </div>
       </div>

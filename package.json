@@ -18,6 +18,7 @@
     "cors": "^2.8.5",
     "express": "^4.19.2",
     "express-session": "^1.18.2",
+    "framer-motion": "^12.23.13",
     "jsonwebtoken": "^9.0.2",
     "lowdb": "^7.0.1",
     "lucide-react": "^0.344.0",
