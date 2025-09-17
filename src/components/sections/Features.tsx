@@ -45,12 +45,12 @@ const features = [
 
 export default function Features() {
   return (
-    <section className="py-24 bg-gray-50" style={{ backgroundImage: "url('/assets/bg.png')", backgroundSize: 'cover' }}>
+    <section className="py-24 bg-gray-50 dark:bg-navy-900">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <SectionHeading
           number="1"
           label="CORE FEATURES"
-          title={<>Explore our <span className="text-white">Powerful Features</span></>}
+          title={<>Explore our <span className="bg-gradient-to-r from-purple-600 to-pink-600 text-transparent bg-clip-text">Powerful Features</span></>}
           description="Discover the tools that will help you become a profitable trader."
           centered
         />
@@ -62,7 +62,7 @@ export default function Features() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: index * 0.1 }}
-              className="group bg-white rounded-2xl shadow-lg overflow-hidden transform hover:-translate-y-2 transition-transform duration-300"
+              className="group bg-white dark:bg-gray-800 rounded-2xl shadow-lg overflow-hidden transform hover:-translate-y-2 transition-transform duration-300"
             >
               <div className="relative">
                 <img src={feature.image} alt={feature.title} className="w-full h-48 object-cover" />
@@ -72,7 +72,7 @@ export default function Features() {
                 </div>
               </div>
               <div className="p-6">
-                <p className="text-gray-600 mb-4">{feature.description}</p>
+                <p className="text-gray-600 dark:text-gray-400 mb-4">{feature.description}</p>
                 <Link to={feature.link} className="font-medium text-purple-600 hover:text-purple-700 flex items-center">
                   Learn More <ArrowRight className="ml-2 h-4 w-4" />
                 </Link>
