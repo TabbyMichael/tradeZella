@@ -2,6 +2,7 @@ import React from 'react';
 import SectionHeading from '../common/SectionHeading';
 import { Link } from 'react-router-dom';
 import { ArrowRight } from 'lucide-react';
+import { motion } from 'framer-motion';
 
 const features = [
   {
@@ -56,8 +57,11 @@ export default function Features() {
 
         <div className="mt-16 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {features.map((feature, index) => (
-            <div
+            <motion.div
               key={index}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: index * 0.1 }}
               className="group bg-white rounded-2xl shadow-lg overflow-hidden transform hover:-translate-y-2 transition-transform duration-300"
             >
               <div className="relative">
@@ -73,7 +77,7 @@ export default function Features() {
                   Learn More <ArrowRight className="ml-2 h-4 w-4" />
                 </Link>
               </div>
-            </div>
+            </motion.div>
           ))}
         </div>
       </div>
