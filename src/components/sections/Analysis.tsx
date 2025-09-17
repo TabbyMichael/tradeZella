@@ -3,7 +3,7 @@ import SectionHeading from '../common/SectionHeading';
 
 export default function Analysis() {
   return (
-    <section className="py-24 bg-gray-50">
+    <section className="py-24 bg-gray-50 dark:bg-navy-900">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <SectionHeading
           number="2"
@@ -14,9 +14,9 @@ export default function Analysis() {
         />
 
         <div className="mt-16">
-          <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
+          <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl overflow-hidden">
             <img 
-              src="https://images.unsplash.com/photo-1642543492481-44e81e3914a7?auto=format&fit=crop&w=1200&q=80" 
+              src="/assets/7.png"
               alt="Trading Analysis Dashboard"
               className="w-full h-auto"
             />

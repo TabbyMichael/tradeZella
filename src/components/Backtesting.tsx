@@ -11,7 +11,7 @@ const features = [
 
 export default function Backtesting() {
   return (
-    <section className="py-24 bg-white">
+    <section className="py-24 bg-white dark:bg-navy-900">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <SectionHeading
           number="5"
@@ -34,9 +34,9 @@ export default function Backtesting() {
 
         <div className="mt-16 flex justify-center space-x-8">
           {features.map((Feature, index) => (
-            <div key={index} className="flex flex-col items-center bg-gray-50 px-8 py-4 rounded-full">
-              <Feature.icon className="h-6 w-6 text-gray-700" />
-              <span className="mt-2 text-sm font-medium">{Feature.label}</span>
+            <div key={index} className="flex flex-col items-center bg-gray-50 dark:bg-gray-800 px-8 py-4 rounded-full">
+              <Feature.icon className="h-6 w-6 text-gray-700 dark:text-gray-300" />
+              <span className="mt-2 text-sm font-medium dark:text-gray-300">{Feature.label}</span>
             </div>
           ))}
         </div>
