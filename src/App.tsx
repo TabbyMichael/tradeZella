@@ -41,6 +41,7 @@ import React, { useState, useEffect } from 'react';
     import OAuthCallbackPage from './pages/OAuthCallbackPage';
     import ResetPasswordPage from './pages/ResetPasswordPage';
     import { LoadingProvider, useLoading } from './components/common/LoadingContext';
+    import { ThemeProvider } from './components/common/ThemeContext';
 
     function AppContent() {
       const { isLoading, setIsLoading } = useLoading();
@@ -53,7 +54,7 @@ import React, { useState, useEffect } from 'react';
       }, [location.pathname, setIsLoading]);
 
       return (
-        <div className="min-h-screen bg-white">
+        <div className="min-h-screen bg-white dark:bg-navy-900">
           {isLoading && <Loader />}
           <Navbar />
           <Routes>
@@ -107,9 +108,11 @@ import React, { useState, useEffect } from 'react';
     function App() {
       return (
         <Router>
-          <LoadingProvider>
-            <AppContent />
-          </LoadingProvider>
+          <ThemeProvider>
+            <LoadingProvider>
+              <AppContent />
+            </LoadingProvider>
+          </ThemeProvider>
         </Router>
       );
     }
