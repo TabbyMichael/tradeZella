@@ -40,6 +40,7 @@ import React, { useState, useEffect } from 'react';
     import ForgotPasswordPage from './pages/ForgotPasswordPage';
     import OAuthCallbackPage from './pages/OAuthCallbackPage';
     import ResetPasswordPage from './pages/ResetPasswordPage';
+import TradesPage from './pages/TradesPage';
     import { LoadingProvider, useLoading } from './components/common/LoadingContext';
     import { ThemeProvider } from './components/common/ThemeContext';
 
@@ -99,6 +100,7 @@ import React, { useState, useEffect } from 'react';
             <Route path="/forgot-password" element={<ForgotPasswordPage />} />
             <Route path="/oauth/callback" element={<OAuthCallbackPage />} />
             <Route path="/reset-password/:token" element={<ResetPasswordPage />} />
+            <Route path="/trades" element={<TradesPage />} />
           </Routes>
           <Footer />
         </div>

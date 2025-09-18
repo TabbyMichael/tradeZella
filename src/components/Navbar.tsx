@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { BookOpen, ChevronDown, Sun, Moon } from 'lucide-react';
 import Button from './common/Button';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useTheme } from './common/ThemeContext';
 
 const resourcesLinks = [
@@ -24,6 +24,21 @@ export default function Navbar() {
   const [isResourcesOpen, setIsResourcesOpen] = useState(false);
   const [isFeaturesOpen, setIsFeaturesOpen] = useState(false);
   const { theme, toggleTheme } = useTheme();
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      setIsAuthenticated(true);
+    }
+  }, []);
+
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    setIsAuthenticated(false);
+    navigate('/');
+  };
 
   const toggleResources = () => {
     setIsResourcesOpen(!isResourcesOpen);
@@ -81,10 +96,20 @@ export default function Navbar() {
             </div>
             <Link to="/pricing" className="text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white">Pricing</Link>
             <Link to="/broker-support" className="text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white">Broker Support</Link>
-            <Link to="/login" className="text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white">Log In</Link>
-            <Link to="/signup">
-              <Button variant="gradient">Get Started &gt;</Button>
-            </Link>
+
+            {isAuthenticated ? (
+              <>
+                <Link to="/trades" className="text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white">My Trades</Link>
+                <Button variant="secondary" onClick={handleLogout}>Logout</Button>
+              </>
+            ) : (
+              <>
+                <Link to="/login" className="text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white">Log In</Link>
+                <Link to="/signup">
+                  <Button variant="gradient">Get Started &gt;</Button>
+                </Link>
+              </>
+            )}
           </div>
           <button onClick={toggleTheme} data-testid="theme-switcher" className="p-2 rounded-full text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
             {theme === 'light' ? <Moon className="h-6 w-6" /> : <Sun className="h-6 w-6" />}
