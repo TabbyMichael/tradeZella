@@ -5,6 +5,7 @@ import session from 'express-session';
 import passport from 'passport';
 import { initDb } from './db.js';
 import authRouter from './routes/auth.routes.js';
+import tradeRouter from './routes/trade.routes.js';
 import errorHandler from './middleware/errorHandler.js';
 import './services/passport.js';
 
@@ -29,6 +30,7 @@ app.get('/', (req, res) => {
 });
 
 app.use('/api/auth', authRouter);
+app.use('/api/trades', tradeRouter);
 
 app.use(errorHandler);
 
