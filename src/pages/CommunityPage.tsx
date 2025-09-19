@@ -55,7 +55,7 @@ const LeaderboardItem = ({ user, stat, rank }) => (
 
 export default function CommunityPage() {
   return (
-    <div className="bg-gray-50 dark:forum-bg min-h-screen py-24">
+    <div className="bg-gray-50 forum-bg min-h-screen py-24">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <SectionHeading
           title="Community Hub"
@@ -68,7 +68,7 @@ export default function CommunityPage() {
           <div className="lg:col-span-2">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {categories.map((category) => (
-                <a href={category.link} key={category.name} className="bg-white dark:category-card-3d group p-8 rounded-2xl shadow-sm hover:shadow-xl transition-shadow duration-300 flex flex-col items-center text-center">
+                <a href={category.link} key={category.name} className="bg-white category-card-3d group p-8 rounded-2xl shadow-sm hover:shadow-xl transition-shadow duration-300 flex flex-col items-center text-center">
                   <div className="flex items-center justify-center h-16 w-16 bg-gray-100 dark:bg-navy-800 rounded-full mb-4 group-hover:scale-110 transition-transform duration-300">
                     {category.icon}
                   </div>
