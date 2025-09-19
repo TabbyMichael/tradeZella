@@ -44,12 +44,12 @@ const categories = [
 
 const LeaderboardItem = ({ user, stat, rank }) => (
   <div className="flex items-center justify-between p-3 bg-gray-100 dark:bg-navy-800/50 rounded-lg">
-    <div className="flex items-center">
-      <span className="text-sm font-bold text-gray-500 dark:text-gray-400 w-6">{rank}.</span>
-      <img className="h-8 w-8 rounded-full mr-3" src={`https://i.pravatar.cc/40?u=${user}`} alt={user} />
-      <span className="font-medium text-slate-800 dark:text-white">{user}</span>
+    <div className="flex-1 flex items-center min-w-0">
+      <span className="text-sm font-bold text-gray-500 dark:text-gray-400 w-6 flex-shrink-0">{rank}.</span>
+      <img className="h-8 w-8 rounded-full mr-3 flex-shrink-0" src={`https://i.pravatar.cc/40?u=${user}`} alt={user} />
+      <span className="font-medium text-slate-800 dark:text-white truncate">{user}</span>
     </div>
-    <span className="font-semibold text-purple-600 dark:text-purple-400">{stat}</span>
+    <span className="font-semibold text-purple-600 dark:text-purple-400 ml-4 flex-shrink-0">{stat}</span>
   </div>
 );
 
