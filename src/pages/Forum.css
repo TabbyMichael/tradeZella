@@ -1,4 +1,4 @@
-.forum-bg {
+.dark .forum-bg {
     background-color: #0a192f; /* A deep navy blue, similar to bg-navy-900 */
     background-image:
       radial-gradient(circle at 15% 50%, rgba(128, 0, 128, 0.1), transparent 30%),
@@ -7,16 +7,9 @@
     background-repeat: no-repeat;
   }
 
-  .category-card-3d {
+  .dark .category-card-3d {
     background-color: rgba(17, 24, 39, 0.6); /* bg-gray-900 with opacity */
     border: 1px solid rgba(75, 85, 99, 0.3); /* gray-700 with opacity */
-    border-radius: 1rem;
-    padding: 2rem;
-    text-align: center;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
@@ -24,7 +17,7 @@
     overflow: hidden;
   }
 
-  .category-card-3d:before {
+  .dark .category-card-3d:before {
     content: '';
     position: absolute;
     top: -50%;
@@ -37,25 +30,11 @@
     pointer-events: none;
   }
 
-  .category-card-3d:hover:before {
+  .dark .category-card-3d:hover:before {
     transform: scale(1);
   }
 
-  .category-card-3d:hover {
+  .dark .category-card-3d:hover {
     transform: translateY(-10px) perspective(1000px) rotateX(2deg);
     box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.4), 0 0 15px rgba(167, 139, 250, 0.2);
-  }
-
-  .leaderboard-item {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0.75rem;
-    background-color: rgba(31, 41, 55, 0.5); /* bg-gray-800 with opacity */
-    border-radius: 0.5rem;
-    transition: background-color 0.2s ease;
-  }
-
-  .leaderboard-item:hover {
-    background-color: rgba(55, 65, 81, 0.7); /* bg-gray-700 with opacity */
   }
