@@ -1,51 +1,116 @@
 import React from 'react';
-    import SectionHeading from '../components/common/SectionHeading';
-    
-    const forumCategories = [
-      {
-        title: 'General Trading',
-        description: 'Discuss general trading topics, strategies, and market analysis.',
-        link: '#'
-      },
-      {
-        title: 'Strategy Discussion',
-        description: 'Share and discuss your trading strategies with other traders.',
-        link: '#'
-      },
-      {
-        title: 'Platform Feedback',
-        description: 'Provide feedback on the TradeZella platform and suggest new features.',
-        link: '#'
-      },
-      {
-        title: 'Technical Support',
-        description: 'Get help with technical issues and platform-related questions.',
-        link: '#'
-      }
-    ];
-    
-    export default function CommunityPage() {
-      return (
-        <div className="py-24 bg-white dark:bg-navy-900">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <SectionHeading
-              title="Community Forum"
-              description="Connect with other traders, share your ideas, and discuss trading strategies. Join our community and become part of the TradeZella family."
-              centered
-            />
-            
-            <div className="mt-12 grid grid-cols-1 md:grid-cols-2 gap-8">
-              {forumCategories.map((category, index) => (
-                <div key={index} className="bg-gray-50 dark:bg-gray-800 p-6 rounded-lg shadow-md flex flex-col">
-                  <h3 className="text-xl font-bold mb-2 dark:text-white">{category.title}</h3>
-                  <p className="text-gray-600 dark:text-gray-400 mb-4">{category.description}</p>
-                  <div className="flex justify-between items-center mt-4">
-                    <a href={category.link} className="text-purple-600 hover:text-purple-700 dark:text-purple-400 dark:hover:text-purple-300 font-medium">Join Discussion &gt;</a>
+import { ShieldCheckIcon, StarIcon, FireIcon, RssIcon, ChatBubbleLeftRightIcon, UserGroupIcon } from '@heroicons/react/24/outline';
+import SectionHeading from '../components/common/SectionHeading';
+import './Forum.css';
+
+const categories = [
+  {
+    name: 'Trade Journals',
+    description: 'Share your trades and track your progress with the community.',
+    icon: <StarIcon className="h-8 w-8 text-yellow-500" />,
+    link: '#',
+  },
+  {
+    name: 'Market Discussions',
+    description: 'Discuss market trends, news, and general analysis.',
+    icon: <ChatBubbleLeftRightIcon className="h-8 w-8 text-sky-500" />,
+    link: '#',
+  },
+  {
+    name: 'Strategies & Playbooks',
+    description: 'Share and dissect trading strategies and playbooks.',
+    icon: <FireIcon className="h-8 w-8 text-red-500" />,
+    link: '#',
+  },
+  {
+    name: 'Trader Psychology',
+    description: 'Discuss the mental game of trading, discipline, and risk.',
+    icon: <UserGroupIcon className="h-8 w-8 text-green-500" />,
+    link: '#',
+  },
+  {
+    name: 'Tools & Resources',
+    description: 'Talk about brokers, software, and other trading tools.',
+    icon: <RssIcon className="h-8 w-8 text-orange-500" />,
+    link: '#',
+  },
+  {
+    name: 'Platform Feedback',
+    description: 'Help us improve by providing feedback and suggestions.',
+    icon: <ShieldCheckIcon className="h-8 w-8 text-indigo-500" />,
+    link: '#',
+  },
+];
+
+const LeaderboardItem = ({ user, stat, rank }) => (
+  <div className="flex items-center justify-between p-3 bg-navy-800/50 rounded-lg">
+    <div className="flex items-center">
+      <span className="text-sm font-bold text-gray-400 w-6">{rank}.</span>
+      <img className="h-8 w-8 rounded-full mr-3" src={`https://i.pravatar.cc/40?u=${user}`} alt={user} />
+      <span className="font-medium text-white">{user}</span>
+    </div>
+    <span className="font-semibold text-purple-400">{stat}</span>
+  </div>
+);
+
+export default function CommunityPage() {
+  return (
+    <div className="forum-bg min-h-screen py-24">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <SectionHeading
+          title="Community Hub"
+          description="Connect, share, and learn with thousands of traders. Dive into discussions, share your journal, and grow together."
+          centered
+        />
+
+        <div className="mt-16 grid grid-cols-1 lg:grid-cols-3 gap-12">
+          {/* Main Content: Categories */}
+          <div className="lg:col-span-2">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {categories.map((category) => (
+                <a href={category.link} key={category.name} className="category-card-3d group">
+                  <div className="flex items-center justify-center h-16 w-16 bg-navy-800 rounded-full mb-4 group-hover:scale-110 transition-transform">
+                    {category.icon}
                   </div>
-                </div>
+                  <h3 className="text-xl font-bold text-white mb-2">{category.name}</h3>
+                  <p className="text-gray-400 text-center mb-4">{category.description}</p>
+                  <span className="font-semibold text-purple-400 group-hover:underline">
+                    View Discussions &rarr;
+                  </span>
+                </a>
               ))}
             </div>
           </div>
+
+          {/* Sidebar: Leaderboards & Stats */}
+          <div className="space-y-8">
+            <div>
+              <h3 className="text-2xl font-bold text-white mb-4">Weekly Leaderboard</h3>
+              <div className="space-y-3">
+                <h4 className="text-sm font-semibold text-gray-400 uppercase tracking-wider">Most Helpful</h4>
+                <LeaderboardItem user="CryptoGraph" stat="1,204 Upvotes" rank={1} />
+                <LeaderboardItem user="SwingKing" stat="987 Upvotes" rank={2} />
+                <LeaderboardItem user="Anna.T" stat="850 Upvotes" rank={3} />
+              </div>
+              <div className="mt-6 space-y-3">
+                <h4 className="text-sm font-semibold text-gray-400 uppercase tracking-wider">Top Journals</h4>
+                <LeaderboardItem user="RiskManager_01" stat="95% Win Rate" rank={1} />
+                <LeaderboardItem user="ScalperX" stat="12 streak" rank={2} />
+                <LeaderboardItem user="MomentumM" stat="4.5 R:R" rank={3} />
+              </div>
+            </div>
+
+            <div className="p-6 bg-navy-800/50 rounded-lg">
+              <h3 className="text-xl font-bold text-white mb-3">Community Stats</h3>
+              <div className="space-y-2">
+                <div className="flex justify-between text-gray-300"><span>Threads:</span><span className="font-semibold">4,821</span></div>
+                <div className="flex justify-between text-gray-300"><span>Posts:</span><span className="font-semibold">62,194</span></div>
+                <div className="flex justify-between text-gray-300"><span>Members:</span><span className="font-semibold">12,345</span></div>
+              </div>
+            </div>
+          </div>
         </div>
-      );
-    }
+      </div>
+    </div>
+  );
+}
