@@ -28,7 +28,7 @@ import React from 'react';
     
     export default function CareersPage() {
       return (
-        <div className="py-24 bg-white">
+        <div className="py-24 bg-white dark:bg-navy-900">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <SectionHeading
               title="Join Our Team"
@@ -37,17 +37,17 @@ import React from 'react';
             />
             
             <div className="mt-12">
-              <h2 className="text-3xl font-bold mb-6">Open Positions</h2>
+              <h2 className="text-3xl font-bold mb-6 dark:text-white">Open Positions</h2>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                 {openPositions.map((position, index) => (
-                  <div key={index} className="bg-gray-50 p-6 rounded-lg shadow-md flex flex-col">
+                  <div key={index} className="bg-gray-50 dark:bg-gray-800 p-6 rounded-lg shadow-md flex flex-col">
                     <img src={position.image} alt={position.title} className="rounded-t-lg mb-4 h-48 w-full object-cover" />
                     <div className="flex-1">
-                      <h3 className="text-xl font-bold mb-2">{position.title}</h3>
-                      <p className="text-gray-600 mb-4">{position.description}</p>
+                      <h3 className="text-xl font-bold mb-2 dark:text-white">{position.title}</h3>
+                      <p className="text-gray-600 dark:text-gray-400 mb-4">{position.description}</p>
                     </div>
                     <div className="flex justify-between items-center mt-4">
-                      <span className="text-gray-700 font-medium">{position.location}</span>
+                      <span className="text-gray-700 dark:text-gray-300 font-medium">{position.location}</span>
                       <Button variant="gradient">
                         <a href={position.link}>Apply Now &gt;</a>
                       </Button>
@@ -58,23 +58,23 @@ import React from 'react';
             </div>
             
             <div className="mt-16">
-              <h2 className="text-3xl font-bold mb-6">Benefits & Perks</h2>
+              <h2 className="text-3xl font-bold mb-6 dark:text-white">Benefits & Perks</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                <div className="bg-gray-50 p-6 rounded-lg shadow-md">
-                  <h4 className="text-xl font-bold mb-2">Competitive Compensation</h4>
-                  <p className="text-gray-600">We offer competitive salaries and benefits packages.</p>
+                <div className="bg-gray-50 dark:bg-gray-800 p-6 rounded-lg shadow-md">
+                  <h4 className="text-xl font-bold mb-2 dark:text-white">Competitive Compensation</h4>
+                  <p className="text-gray-600 dark:text-gray-400">We offer competitive salaries and benefits packages.</p>
                 </div>
-                <div className="bg-gray-50 p-6 rounded-lg shadow-md">
-                  <h4 className="text-xl font-bold mb-2">Flexible Work</h4>
-                  <p className="text-gray-600">We offer flexible work hours and remote work options.</p>
+                <div className="bg-gray-50 dark:bg-gray-800 p-6 rounded-lg shadow-md">
+                  <h4 className="text-xl font-bold mb-2 dark:text-white">Flexible Work</h4>
+                  <p className="text-gray-600 dark:text-gray-400">We offer flexible work hours and remote work options.</p>
                 </div>
-                <div className="bg-gray-50 p-6 rounded-lg shadow-md">
-                  <h4 className="text-xl font-bold mb-2">Professional Growth</h4>
-                  <p className="text-gray-600">We provide opportunities for professional growth and development.</p>
+                <div className="bg-gray-50 dark:bg-gray-800 p-6 rounded-lg shadow-md">
+                  <h4 className="text-xl font-bold mb-2 dark:text-white">Professional Growth</h4>
+                  <p className="text-gray-600 dark:text-gray-400">We provide opportunities for professional growth and development.</p>
                 </div>
-                <div className="bg-gray-50 p-6 rounded-lg shadow-md">
-                  <h4 className="text-xl font-bold mb-2">Supportive Environment</h4>
-                  <p className="text-gray-600">We foster a collaborative and supportive work environment.</p>
+                <div className="bg-gray-50 dark:bg-gray-800 p-6 rounded-lg shadow-md">
+                  <h4 className="text-xl font-bold mb-2 dark:text-white">Supportive Environment</h4>
+                  <p className="text-gray-600 dark:text-gray-400">We foster a collaborative and supportive work environment.</p>
                 </div>
               </div>
             </div>

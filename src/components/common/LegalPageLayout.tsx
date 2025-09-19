@@ -9,14 +9,14 @@ interface LegalPageLayoutProps {
 
 export default function LegalPageLayout({ title, description, children }: LegalPageLayoutProps) {
   return (
-    <div className="py-24 bg-white">
+    <div className="py-24 bg-white dark:bg-navy-900">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         <SectionHeading
           title={title}
           description={description}
           centered
         />
-        <div className="mt-12 prose lg:prose-xl max-w-none">
+        <div className="mt-12 prose lg:prose-xl max-w-none dark:prose-invert">
           {children}
         </div>
       </div>

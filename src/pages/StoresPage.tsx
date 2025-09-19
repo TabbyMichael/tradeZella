@@ -27,7 +27,7 @@ import React from 'react';
     
     export default function StoresPage() {
       return (
-        <div className="py-24 bg-white">
+        <div className="py-24 bg-white dark:bg-navy-900">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <SectionHeading
               title="Store Locator"
@@ -37,13 +37,13 @@ import React from 'react';
             
             <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-8">
               {storeLocations.map((store, index) => (
-                <div key={index} className="bg-gray-50 p-6 rounded-lg shadow-md flex flex-col">
-                  <h3 className="text-xl font-bold mb-2">{store.name}</h3>
-                  <p className="text-gray-600 mb-2">{store.address}</p>
-                  <p className="text-gray-600 mb-2"><strong>Phone:</strong> {store.phone}</p>
-                  <p className="text-gray-600 mb-4"><strong>Hours:</strong> {store.hours}</p>
+                <div key={index} className="bg-gray-50 dark:bg-gray-800 p-6 rounded-lg shadow-md flex flex-col">
+                  <h3 className="text-xl font-bold mb-2 dark:text-white">{store.name}</h3>
+                  <p className="text-gray-600 dark:text-gray-400 mb-2">{store.address}</p>
+                  <p className="text-gray-600 dark:text-gray-400 mb-2"><strong>Phone:</strong> {store.phone}</p>
+                  <p className="text-gray-600 dark:text-gray-400 mb-4"><strong>Hours:</strong> {store.hours}</p>
                   <div className="flex justify-between items-center mt-4">
-                    <a href={store.mapLink} className="text-purple-600 hover:text-purple-700 font-medium">View on Map &gt;</a>
+                    <a href={store.mapLink} className="text-purple-600 hover:text-purple-700 dark:text-purple-400 dark:hover:text-purple-300 font-medium">View on Map &gt;</a>
                   </div>
                 </div>
               ))}

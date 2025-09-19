@@ -4,7 +4,7 @@ import React from 'react';
     
     export default function GiftCardsPage() {
       return (
-        <div className="py-24 bg-white">
+        <div className="py-24 bg-white dark:bg-navy-900">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <SectionHeading
               title="Gift Cards"
@@ -14,8 +14,8 @@ import React from 'react';
             
             <div className="mt-12 grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
               <div>
-                <h2 className="text-3xl font-bold mb-6">Purchase Options</h2>
-                <p className="text-gray-600 mb-4">
+                <h2 className="text-3xl font-bold mb-6 dark:text-white">Purchase Options</h2>
+                <p className="text-gray-600 dark:text-gray-400 mb-4">
                   You can purchase TradeZella gift cards online or at any of our store locations.
                 </p>
                 <Button variant="gradient">
@@ -32,21 +32,21 @@ import React from 'react';
             </div>
             
             <div className="mt-16">
-              <h2 className="text-3xl font-bold mb-6">Redemption Process</h2>
-              <p className="text-gray-600 mb-4">
+              <h2 className="text-3xl font-bold mb-6 dark:text-white">Redemption Process</h2>
+              <p className="text-gray-600 dark:text-gray-400 mb-4">
                 To redeem a gift card, enter the gift card code at checkout.
               </p>
               
-              <h2 className="text-3xl font-bold mb-6">Terms and Conditions</h2>
-              <p className="text-gray-600 mb-4">
+              <h2 className="text-3xl font-bold mb-6 dark:text-white">Terms and Conditions</h2>
+              <p className="text-gray-600 dark:text-gray-400 mb-4">
                 Gift cards are non-refundable and cannot be redeemed for cash.
               </p>
               
-              <h2 className="text-3xl font-bold mb-6">Check Gift Card Balance</h2>
-              <p className="text-gray-600 mb-4">
+              <h2 className="text-3xl font-bold mb-6 dark:text-white">Check Gift Card Balance</h2>
+              <p className="text-gray-600 dark:text-gray-400 mb-4">
                 You can check your gift card balance by entering your gift card code below.
               </p>
-              <input type="text" placeholder="Enter gift card code" className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-purple-600 focus:border-transparent mb-4" />
+              <input type="text" placeholder="Enter gift card code" className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:bg-gray-800 dark:border-gray-600 dark:text-white focus:ring-2 focus:ring-purple-600 focus:border-transparent mb-4" />
               <Button variant="gradient">
                 <a href="#">Check Balance &gt;</a>
               </Button>

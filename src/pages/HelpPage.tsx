@@ -31,7 +31,7 @@ import React from 'react';
     
     export default function HelpPage() {
       return (
-        <div className="py-24 bg-white">
+        <div className="py-24 bg-white dark:bg-navy-900">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <SectionHeading
               title="Help Center"
@@ -41,11 +41,11 @@ import React from 'react';
             
             <div className="mt-12 grid grid-cols-1 md:grid-cols-2 gap-8">
               {helpArticles.map((article, index) => (
-                <div key={index} className="bg-gray-50 p-6 rounded-lg shadow-md flex flex-col">
-                  <h3 className="text-xl font-bold mb-2">{article.title}</h3>
-                  <p className="text-gray-600 mb-4">{article.description}</p>
+                <div key={index} className="bg-gray-50 dark:bg-gray-800 p-6 rounded-lg shadow-md flex flex-col">
+                  <h3 className="text-xl font-bold mb-2 dark:text-white">{article.title}</h3>
+                  <p className="text-gray-600 dark:text-gray-400 mb-4">{article.description}</p>
                   <div className="flex justify-between items-center mt-4">
-                    <a href={article.link} className="text-purple-600 hover:text-purple-700 font-medium">Read More &gt;</a>
+                    <a href={article.link} className="text-purple-600 hover:text-purple-700 dark:text-purple-400 dark:hover:text-purple-300 font-medium">Read More &gt;</a>
                   </div>
                 </div>
               ))}
