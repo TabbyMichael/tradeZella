@@ -60,7 +60,7 @@ import React, { useState } from 'react';
       const [activeCategory, setActiveCategory] = useState(faqData[0].category);
     
       return (
-        <div className="py-24 bg-white">
+        <div className="py-24 bg-white dark:bg-navy-900">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <SectionHeading
               title="Frequently Asked Questions"
@@ -73,7 +73,7 @@ import React, { useState } from 'react';
                 {faqData.map((item) => (
                   <button
                     key={item.category}
-                    className={`px-4 py-2 rounded-lg font-medium ${activeCategory === item.category ? 'bg-purple-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`}
+                    className={`px-4 py-2 rounded-lg font-medium ${activeCategory === item.category ? 'bg-purple-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700'}`}
                     onClick={() => setActiveCategory(item.category)}
                   >
                     {item.category}
@@ -85,9 +85,9 @@ import React, { useState } from 'react';
                 item.category === activeCategory && (
                   <div key={item.category}>
                     {item.questions.map((faq, index) => (
-                      <div key={index} className="bg-gray-50 p-6 rounded-lg shadow-md mb-4">
-                        <h3 className="text-xl font-bold mb-2">{faq.question}</h3>
-                        <p className="text-gray-600">{faq.answer}</p>
+                      <div key={index} className="bg-gray-50 dark:bg-gray-800 p-6 rounded-lg shadow-md mb-4">
+                        <h3 className="text-xl font-bold mb-2 dark:text-white">{faq.question}</h3>
+                        <p className="text-gray-600 dark:text-gray-400">{faq.answer}</p>
                       </div>
                     ))}
                   </div>

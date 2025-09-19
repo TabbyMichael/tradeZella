@@ -4,7 +4,7 @@ import React from 'react';
     
     export default function PartnersPage() {
       return (
-        <div className="py-24 bg-white">
+        <div className="py-24 bg-white dark:bg-navy-900">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <SectionHeading
               title="Partner Program"
@@ -14,8 +14,8 @@ import React from 'react';
             
             <div className="mt-12 grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
               <div>
-                <h2 className="text-3xl font-bold mb-6">Program Benefits</h2>
-                <ul className="list-disc list-inside text-gray-600 space-y-2">
+                <h2 className="text-3xl font-bold mb-6 dark:text-white">Program Benefits</h2>
+                <ul className="list-disc list-inside text-gray-600 dark:text-gray-400 space-y-2">
                   <li>Earn competitive commissions for every new user you refer.</li>
                   <li>Access to marketing materials and resources.</li>
                   <li>Dedicated partner support.</li>
@@ -32,13 +32,13 @@ import React from 'react';
             </div>
             
             <div className="mt-16">
-              <h2 className="text-3xl font-bold mb-6">Eligibility Requirements</h2>
-              <p className="text-gray-600 mb-4">
+              <h2 className="text-3xl font-bold mb-6 dark:text-white">Eligibility Requirements</h2>
+              <p className="text-gray-600 dark:text-gray-400 mb-4">
                 To become a partner, you must have a website or social media presence related to trading or finance.
               </p>
               
-              <h2 className="text-3xl font-bold mb-6">Application Process</h2>
-              <p className="text-gray-600 mb-4">
+              <h2 className="text-3xl font-bold mb-6 dark:text-white">Application Process</h2>
+              <p className="text-gray-600 dark:text-gray-400 mb-4">
                 To apply for the partner program, please fill out the form below. We will review your application and contact you within 7 business days.
               </p>
               
