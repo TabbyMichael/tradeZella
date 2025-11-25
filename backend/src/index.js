@@ -6,6 +6,10 @@ import passport from 'passport';
 import { initDb } from './db.js';
 import authRouter from './routes/auth.routes.js';
 import tradeRouter from './routes/trade.routes.js';
+import categoryRouter from './routes/category.routes.js';
+import threadRouter from './routes/thread.routes.js';
+import postRouter from './routes/post.routes.js';
+import tagRouter from './routes/tag.routes.js';
 import errorHandler from './middleware/errorHandler.js';
 import './services/passport.js';
 
@@ -31,6 +35,10 @@ app.get('/', (req, res) => {
 
 app.use('/api/auth', authRouter);
 app.use('/api/trades', tradeRouter);
+app.use('/api/community/categories', categoryRouter);
+app.use('/api/community/threads', threadRouter);
+app.use('/api/community/posts', postRouter);
+app.use('/api/community/tags', tagRouter);
 
 app.use(errorHandler);
 
