@@ -1,14 +1,33 @@
-import express from 'express';
+import { Router } from 'express';
 import { TagController } from '../controllers/tag.controller.js';
+import { protect } from '../middleware/auth.middleware.js';
 
-const router = express.Router();
+const router = Router();
 
 // Public routes
-router.get('/', TagController.getAllTags);
-router.get('/:slug', TagController.getTagBySlug);
-router.get('/thread/:threadId', TagController.getTagsByThreadId);
+router.route('/')
+  .get(TagController.getTags);
+
+router.route('/:id')
+  .get(TagController.getTag);
+
+// Thread-specific routes
+router.route('/thread/:thread_id')
+  .get(TagController.getTagsForThread);
 
 // Protected routes
-router.post('/', TagController.createTag);
+router.use(protect);
+router.route('/')
+  .post(TagController.createTag);
+
+router.route('/:id')
+  .put(TagController.updateTag)
+  .delete(TagController.deleteTag);
+
+router.route('/thread/:thread_id/tag')
+  .post(TagController.addTagToThread);
+
+router.route('/thread/:thread_id/tag/:tag_id')
+  .delete(TagController.removeTagFromThread);
 
 export default router;

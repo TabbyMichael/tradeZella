@@ -1,87 +1,60 @@
 import { ThreadModel } from '../models/thread.model.js';
-import { PostModel } from '../models/post.model.js';
-import { TagModel } from '../models/tag.model.js';
 
 export class ThreadService {
-  static async createThread(data) {
-    // Validate required fields
-    if (!data.category_id || !data.user_id || !data.title || !data.content) {
-      throw new Error('Category ID, user ID, title, and content are required');
-    }
+  static async getAllThreads(options = {}) {
+    const threads = await ThreadModel.findAll(options);
+    const totalCount = await ThreadModel.count(options);
     
-    // Create the thread
-    const thread = await ThreadModel.create(data);
-    
-    // If tags are provided, associate them with the thread
-    if (data.tags && Array.isArray(data.tags)) {
-      for (const tagName of data.tags) {
-        // Create tag if it doesn't exist
-        let tag = await TagModel.findBySlug(tagName.toLowerCase().replace(/\s+/g, '-'));
-        if (!tag) {
-          tag = await TagModel.create({
-            name: tagName,
-            slug: tagName.toLowerCase().replace(/\s+/g, '-')
-          });
-        }
-        
-        // Associate tag with thread
-        await TagModel.addTagToThread(thread.id, tag.id);
-      }
-    }
-    
-    return thread;
-  }
-
-  static async getAllThreads(filters = {}) {
-    return await ThreadModel.findAll(filters);
+    return {
+      threads,
+      totalCount,
+      totalPages: Math.ceil(totalCount / (options.limit || 20)),
+      currentPage: Math.floor((options.offset || 0) / (options.limit || 20)) + 1
+    };
   }
 
   static async getThreadById(id) {
+    return await ThreadModel.findById(id);
+  }
+
+  static async createThread(threadData) {
+    // Validate required fields
+    if (!threadData.category_id || !threadData.user_id || !threadData.title || !threadData.content) {
+      throw new Error('Category ID, user ID, title, and content are required');
+    }
+    
+    return await ThreadModel.create(threadData);
+  }
+
+  static async updateThread(id, threadData, userId, userRole) {
     const thread = await ThreadModel.findById(id);
     if (!thread) {
       throw new Error('Thread not found');
     }
     
-    // Get associated posts
-    const posts = await PostModel.findByThreadId(id);
+    // Check if user is authorized to update (author or admin)
+    if (thread.user_id !== userId && userRole !== 'admin') {
+      throw new Error('Not authorized to update this thread');
+    }
     
-    // Get associated tags
-    const tags = await TagModel.findByThreadId(id);
-    
-    return {
-      ...thread,
-      posts,
-      tags
-    };
+    return await ThreadModel.update(id, threadData);
   }
 
-  static async updateThread(id, data) {
-    // Check if thread exists
-    const existingThread = await ThreadModel.findById(id);
-    if (!existingThread) {
+  static async deleteThread(id, userId, userRole) {
+    const thread = await ThreadModel.findById(id);
+    if (!thread) {
       throw new Error('Thread not found');
     }
     
-    return await ThreadModel.update(id, data);
-  }
-
-  static async incrementViewCount(id) {
-    // Check if thread exists
-    const existingThread = await ThreadModel.findById(id);
-    if (!existingThread) {
-      throw new Error('Thread not found');
-    }
-    
-    return await ThreadModel.incrementViewCount(id);
-  }
-
-  static async deleteThread(id) {
-    // Check if thread exists
-    const existingThread = await ThreadModel.findById(id);
-    if (!existingThread) {
-      throw new Error('Thread not found');
+    // Check if user is authorized to delete (author or admin)
+    if (thread.user_id !== userId && userRole !== 'admin') {
+      throw new Error('Not authorized to delete this thread');
     }
     
     return await ThreadModel.delete(id);
+  }
+
+  static async incrementViewCount(id) {
+    return await ThreadModel.incrementViewCount(id);
   }
 }

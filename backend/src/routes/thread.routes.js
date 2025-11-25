@@ -1,16 +1,23 @@
-import express from 'express';
+import { Router } from 'express';
 import { ThreadController } from '../controllers/thread.controller.js';
 import { protect } from '../middleware/auth.middleware.js';
 
-const router = express.Router();
+const router = Router();
 
 // Public routes
-router.get('/', ThreadController.getAllThreads);
-router.get('/:id', ThreadController.getThreadById);
+router.route('/')
+  .get(ThreadController.getThreads);
+
+router.route('/:id')
+  .get(ThreadController.getThread);
 
 // Protected routes
-router.post('/', protect, ThreadController.createThread);
-router.put('/:id', protect, ThreadController.updateThread);
-router.delete('/:id', protect, ThreadController.deleteThread);
+router.use(protect);
+router.route('/')
+  .post(ThreadController.createThread);
+
+router.route('/:id')
+  .put(ThreadController.updateThread)
+  .delete(ThreadController.deleteThread);
 
 export default router;

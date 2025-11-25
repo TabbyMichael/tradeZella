@@ -28,16 +28,104 @@ describe('ThreadModel', () => {
     jest.clearAllMocks();
   });
   
+  describe('findAll', () => {
+    it('should return threads with default options', async () => {
+      const threads = [
+        { id: 1, title: 'First Thread', category_name: 'General', author_name: 'User1' },
+        { id: 2, title: 'Second Thread', category_name: 'Trading', author_name: 'User2' }
+      ];
+      
+      mockClient.query.mockResolvedValue({ rows: threads });
+      
+      const result = await ThreadModel.findAll();
+      
+      expect(pool.connect).toHaveBeenCalled();
+      expect(mockClient.query).toHaveBeenCalledWith(
+        `SELECT t.*, c.name as category_name, u.name as author_name
+         FROM threads t
+         JOIN categories c ON t.category_id = c.id
+         JOIN users u ON t.user_id = u.id
+         ORDER BY t.last_activity_at DESC
+         LIMIT $1 OFFSET $2`,
+        [20, 0]
+      );
+      expect(result).toEqual(threads);
+      expect(mockClient.release).toHaveBeenCalled();
+    });
+    
+    it('should return threads with search filter', async () => {
+      const threads = [
+        { id: 1, title: 'Search Thread', category_name: 'General', author_name: 'User1' }
+      ];
+      
+      mockClient.query.mockResolvedValue({ rows: threads });
+      
+      const result = await ThreadModel.findAll({ search: 'search', limit: 10, offset: 0 });
+      
+      expect(pool.connect).toHaveBeenCalled();
+      expect(mockClient.query).toHaveBeenCalledWith(
+        `SELECT t.*, c.name as category_name, u.name as author_name
+         FROM threads t
+         JOIN categories c ON t.category_id = c.id
+         JOIN users u ON t.user_id = u.id
+         WHERE 1=1 AND (t.search_vector @@ plainto_tsquery('english', $1) OR t.title ILIKE $2 OR t.content ILIKE $3)
+         ORDER BY t.last_activity_at DESC
+         LIMIT $4 OFFSET $5`,
+        ['search', '%search%', '%search%', 10, 0]
+      );
+      expect(result).toEqual(threads);
+      expect(mockClient.release).toHaveBeenCalled();
+    });
+  });
+  
+  describe('findById', () => {
+    it('should return a thread by id', async () => {
+      const thread = { id: 1, title: 'Test Thread', category_name: 'General', author_name: 'User1' };
+      
+      mockClient.query.mockResolvedValue({ rows: [thread] });
+      
+      const result = await ThreadModel.findById(1);
+      
+      expect(pool.connect).toHaveBeenCalled();
+      expect(mockClient.query).toHaveBeenCalledWith(
+        `SELECT t.*, c.name as category_name, u.name as author_name
+         FROM threads t
+         JOIN categories c ON t.category_id = c.id
+         JOIN users u ON t.user_id = u.id
+         WHERE t.id = $1`,
+        [1]
+      );
+      expect(result).toEqual(thread);
+      expect(mockClient.release).toHaveBeenCalled();
+    });
+  });
+  
+  describe('count', () => {
+    it('should return thread count', async () => {
+      mockClient.query.mockResolvedValue({ rows: [{ count: '5' }] });
+      
+      const result = await ThreadModel.count();
+      
+      expect(pool.connect).toHaveBeenCalled();
+      expect(mockClient.query).toHaveBeenCalledWith(
+        'SELECT COUNT(*) FROM threads t',
+        []
+      );
+      expect(result).toBe(5);
+      expect(mockClient.release).toHaveBeenCalled();
+    });
+  });
+  
   describe('create', () => {
     it('should create a new thread', async () => {
       const threadData = {
         category_id: 1,
         user_id: 1,
-        title: 'Test Thread',
-        content: 'Test content'
+        title: 'New Thread',
+        content: 'Thread content'
       };
       
-      const expectedResult = {
+      const createdThread = {
         id: 1,
         ...threadData,
         is_pinned: false,
@@ -49,111 +137,41 @@ describe('ThreadModel', () => {
         updated_at: new Date()
       };
       
-      mockClient.query.mockResolvedValue({ rows: [expectedResult] });
+      mockClient.query
+        .mockResolvedValueOnce({ rows: [createdThread] })
+        .mockResolvedValueOnce({ rows: [] }); // For category update
       
       const result = await ThreadModel.create(threadData);
       
       expect(pool.connect).toHaveBeenCalled();
-      expect(mockClient.query).toHaveBeenCalledWith(
+      expect(mockClient.query).toHaveBeenNthCalledWith(
+        1,
         `INSERT INTO threads (category_id, user_id, title, content)
          VALUES ($1, $2, $3, $4)
          RETURNING *`,
         [threadData.category_id, threadData.user_id, threadData.title, threadData.content]
       );
-      expect(result).toEqual(expectedResult);
-      expect(mockClient.release).toHaveBeenCalled();
-    });
-  });
-  
-  describe('findAll', () => {
-    it('should return all threads with default query', async () => {
-      const threads = [
-        { id: 1, title: 'Thread 1', author_name: 'User 1', category_name: 'Category 1' },
-        { id: 2, title: 'Thread 2', author_name: 'User 2', category_name: 'Category 2' }
-      ];
-      
-      mockClient.query.mockResolvedValue({ rows: threads });
-      
-      const result = await ThreadModel.findAll();
-      
-      expect(pool.connect).toHaveBeenCalled();
-      expect(mockClient.query).toHaveBeenCalledWith(
-        `
-        SELECT t.*, u.name as author_name, c.name as category_name
-        FROM threads t
-        JOIN users u ON t.user_id = u.id
-        JOIN categories c ON t.category_id = c.id
-       ORDER BY t.created_at DESC`,
-        []
+      expect(mockClient.query).toHaveBeenNthCalledWith(
+        2,
+        'UPDATE categories SET updated_at = CURRENT_TIMESTAMP WHERE id = $1',
+        [threadData.category_id]
       );
-      expect(result).toEqual(threads);
-      expect(mockClient.release).toHaveBeenCalled();
-    });
-    
-    it('should apply filters when provided', async () => {
-      const threads = [{ id: 1, title: 'Filtered Thread' }];
-      
-      mockClient.query.mockResolvedValue({ rows: threads });
-      
-      const filters = { category_id: 1, user_id: 1, limit: 10 };
-      const result = await ThreadModel.findAll(filters);
-      
-      expect(pool.connect).toHaveBeenCalled();
-      expect(mockClient.query).toHaveBeenCalledWith(
-        `
-        SELECT t.*, u.name as author_name, c.name as category_name
-        FROM threads t
-        JOIN users u ON t.user_id = u.id
-        JOIN categories c ON t.category_id = c.id
-       WHERE t.category_id = $1 AND t.user_id = $2 ORDER BY t.created_at DESC LIMIT $3`,
-        [1, 1, 10]
-      );
-      expect(result).toEqual(threads);
-      expect(mockClient.release).toHaveBeenCalled();
-    });
-  });
-  
-  describe('findById', () => {
-    it('should return a thread by id with author and category info', async () => {
-      const thread = { 
-        id: 1, 
-        title: 'Test Thread', 
-        author_name: 'Test User', 
-        category_name: 'Test Category' 
-      };
-      
-      mockClient.query.mockResolvedValue({ rows: [thread] });
-      
-      const result = await ThreadModel.findById(1);
-      
-      expect(pool.connect).toHaveBeenCalled();
-      expect(mockClient.query).toHaveBeenCalledWith(
-        `SELECT t.*, u.name as author_name, c.name as category_name
-         FROM threads t
-         JOIN users u ON t.user_id = u.id
-         JOIN categories c ON t.category_id = c.id
-         WHERE t.id = $1`,
-        [1]
-      );
-      expect(result).toEqual(thread);
+      expect(result).toEqual(createdThread);
       expect(mockClient.release).toHaveBeenCalled();
     });
   });
   
   describe('update', () => {
     it('should update a thread', async () => {
-      const updateData = {
-        title: 'Updated Thread',
-        content: 'Updated content',
-        is_pinned: true,
-        is_locked: false
-      };
-      
+      const updateData = { title: 'Updated Thread', content: 'Updated content' };
       const updatedThread = {
         id: 1,
         category_id: 1,
         user_id: 1,
-        ...updateData,
+        title: 'Updated Thread',
+        content: 'Updated content',
+        is_pinned: false,
+        is_locked: false,
         view_count: 0,
         reply_count: 0,
         last_activity_at: new Date(),
@@ -168,36 +186,10 @@ describe('ThreadModel', () => {
       expect(pool.connect).toHaveBeenCalled();
       expect(mockClient.query).toHaveBeenCalledWith(
         `UPDATE threads
-         SET title = $1, content = $2, is_pinned = $3, is_locked = $4, updated_at = NOW()
-         WHERE id = $5
+         SET title = $1, content = $2, updated_at = CURRENT_TIMESTAMP
+         WHERE id = $3
          RETURNING *`,
-        [updateData.title, updateData.content, updateData.is_pinned, updateData.is_locked, 1]
-      );
-      expect(result).toEqual(updatedThread);
-      expect(mockClient.release).toHaveBeenCalled();
-    });
-  });
-  
-  describe('incrementViewCount', () => {
-    it('should increment the view count and update last activity', async () => {
-      const updatedThread = {
-        id: 1,
-        title: 'Test Thread',
-        view_count: 1,
-        last_activity_at: new Date()
-      };
-      
-      mockClient.query.mockResolvedValue({ rows: [updatedThread] });
-      
-      const result = await ThreadModel.incrementViewCount(1);
-      
-      expect(pool.connect).toHaveBeenCalled();
-      expect(mockClient.query).toHaveBeenCalledWith(
-        `UPDATE threads
-         SET view_count = view_count + 1, last_activity_at = NOW()
-         WHERE id = $1
-         RETURNING *`,
-        [1]
+        [updateData.title, updateData.content, 1]
       );
       expect(result).toEqual(updatedThread);
       expect(mockClient.release).toHaveBeenCalled();
@@ -206,7 +198,7 @@ describe('ThreadModel', () => {
   
   describe('delete', () => {
     it('should delete a thread', async () => {
-      const deletedThread = { id: 1, title: 'Test Thread' };
+      const deletedThread = { id: 1, title: 'Test Thread', category_id: 1, user_id: 1 };
       
       mockClient.query.mockResolvedValue({ rows: [deletedThread] });
       
@@ -218,6 +210,21 @@ describe('ThreadModel', () => {
         [1]
       );
       expect(result).toEqual(deletedThread);
+      expect(mockClient.release).toHaveBeenCalled();
+    });
+  });
+  
+  describe('incrementViewCount', () => {
+    it('should increment thread view count', async () => {
+      mockClient.query.mockResolvedValue({ rows: [] });
+      
+      await ThreadModel.incrementViewCount(1);
+      
+      expect(pool.connect).toHaveBeenCalled();
+      expect(mockClient.query).toHaveBeenCalledWith(
+        'UPDATE threads SET view_count = view_count + 1 WHERE id = $1',
+        [1]
+      );
       expect(mockClient.release).toHaveBeenCalled();
     });
   });

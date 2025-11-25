@@ -528,44 +528,62 @@ export const createThreadLimiter = rateLimit({
 
 ---
 
-## 🗂️ Migration from SQLite to PostgreSQL
+## 🔍 Repository audit — quick status (what is NOT implemented)
 
-### Steps:
+- Database
+  - PostgreSQL migration & db.js using pg: Not implemented
+  - Migration runner and SQL migration files: Not implemented
 
-1. **Install PostgreSQL dependencies**
-```bash
-npm install pg
-npm uninstall sqlite sqlite3
-```
+- Forum core (MVP)
+  - Categories table + controller/service/routes: Not implemented
+  - Threads table + controller/service/routes: Not implemented
+  - Posts (replies) table + controller/service/routes: Not implemented
+  - Tags + thread_tags + endpoints: Not implemented
+  - Full-text search across threads/posts: Not implemented
 
-2. **Update db.js**
-```javascript
-import pkg from 'pg';
-const { Pool } = pkg;
+- Engagement & social (Phase 2)
+  - Reactions (reactions table + endpoints): Not implemented
+  - Follow system (follows, journal_subscriptions + endpoints): Not implemented
+  - Notifications table + Socket.IO integration: Not implemented
+  - Redis caching for hot threads/leaderboards: Not implemented
 
-const pool = new Pool({
-  host: process.env.DB_HOST || 'localhost',
-  port: process.env.DB_PORT || 5432,
-  database: process.env.DB_NAME || 'tradezella',
-  user: process.env.DB_USER || 'postgres',
-  password: process.env.DB_PASSWORD,
-});
+- Profiles & gamification (Phase 2–3)
+  - User profile fields added to users table: Not implemented
+  - user_stats, user_xp, xp_transactions: Not implemented
+  - badges, user_badges: Not implemented
+  - Leaderboards with Redis caching: Not implemented
 
-export { pool };
-```
+- AI, polls & extras
+  - OpenAI service (ai.service.js) and summarize endpoint: Not implemented
+  - Polls, poll_options, poll_votes: Not implemented
 
-3. **Create migration files**
-```
-backend/src/migrations/
-├── 001_create_users_table.sql
-├── 002_create_trades_table.sql
-├── 003_create_forum_tables.sql
-├── 004_create_reactions_table.sql
-└── ...
-```
+- Moderation & safety
+  - Reports table + moderation endpoints: Not implemented
+  - User roles/ban fields and moderation endpoints: Not implemented
+  - Moderation actions endpoints (lock/pin/delete/ban): Not implemented
 
-4. **Migration runner script**
-Create `/backend/src/migrations/migrate.js` to run SQL files in order
+- Infrastructure & tooling
+  - Socket.IO socket files (notifications.socket.js): Not implemented
+  - Rate limiting middleware (express-rate-limit): Not implemented
+  - Analytics_events table and tracking: Not implemented
+  - Unit/integration/e2e tests for forum features: Not implemented
+  - CI/CD, Redis, production-ready CORS/Helmet configs: Not implemented
+
+---
+
+## ⏭️ Recommended immediate next tasks (minimal MVP)
+1. Migrate to PostgreSQL and add a migration runner.
+2. Implement Categories, Threads, Posts models + controllers + routes (CRUD).
+3. Add Tags and basic thread-tags association.
+4. Implement simple search (Postgres full-text or simple ILIKE) and pagination.
+5. Add basic auth checks (author/admin) to protect write operations.
+6. Write migrations and unit tests for the above.
+
+If you want, I can:
+- provide the exact db.js replacement for PostgreSQL,
+- scaffold the category/thread/post model + routes,
+- create initial SQL migration files,
+pick which of these you'd like to start with.
 
 ---
 

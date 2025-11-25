@@ -1,5 +1,13 @@
 import pkg from 'pg';
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
 const { Pool } = pkg;
+
+// Get __dirname equivalent in ES modules
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 // Create a PostgreSQL connection pool
 const pool = new Pool({
@@ -15,53 +23,49 @@ export async function getDb() {
   return pool;
 }
 
+// Function to run migration files
+export async function runMigrations() {
+  const client = await pool.connect();
+  
+  try {
+    // Get all migration files and sort them
+    const migrationsDir = path.join(__dirname, 'migrations');
+    const migrationFiles = fs.readdirSync(migrationsDir)
+      .filter(file => file.endsWith('.sql'))
+      .sort();
+    
+    console.log(`Found ${migrationFiles.length} migration files`);
+    
+    // Run each migration file
+    for (const file of migrationFiles) {
+      console.log(`Running migration: ${file}`);
+      const migrationPath = path.join(migrationsDir, file);
+      const sql = fs.readFileSync(migrationPath, 'utf8');
+      
+      try {
+        await client.query(sql);
+        console.log(`Successfully ran migration: ${file}`);
+      } catch (err) {
+        console.error(`Error running migration ${file}:`, err);
+        throw err;
+      }
+    }
+    
+    console.log('All migrations completed successfully');
+  } finally {
+    client.release();
+  }
+}
+
 // Function to initialize the database with required tables
 export async function initDb() {
   const client = await pool.connect();
   
   try {
-    // Create users table (keeping existing structure)
-    await client.query(`
-      CREATE TABLE IF NOT EXISTS users (
-        id SERIAL PRIMARY KEY,
-        email TEXT UNIQUE,
-        password TEXT,
-        name TEXT,
-        googleId TEXT,
-        passwordResetToken TEXT,
-        passwordResetExpires TIMESTAMP,
-        role VARCHAR(50) DEFAULT 'user',
-        is_banned BOOLEAN DEFAULT false,
-        ban_reason TEXT,
-        banned_until TIMESTAMP,
-        bio TEXT,
-        avatar_url VARCHAR(500),
-        location VARCHAR(255),
-        website VARCHAR(500),
-        twitter_handle VARCHAR(100),
-        joined_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        last_active_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-      )
-    `);
-
-    // Create trades table (keeping existing structure)
-    await client.query(`
-      CREATE TABLE IF NOT EXISTS trades (
-        id SERIAL PRIMARY KEY,
-        userId INTEGER NOT NULL,
-        symbol TEXT NOT NULL,
-        direction TEXT NOT NULL,
-        size REAL NOT NULL,
-        entryPrice REAL NOT NULL,
-        exitPrice REAL,
-        notes TEXT,
-        createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        FOREIGN KEY (userId) REFERENCES users (id)
-      )
-    `);
-
-    console.log('Database tables initialized successfully');
+    // Run all migrations
+    await runMigrations();
+    
+    console.log('Database initialized successfully');
   } catch (err) {
     console.error('Error initializing database:', err);
     throw err;

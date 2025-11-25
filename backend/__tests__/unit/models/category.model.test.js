@@ -28,44 +28,11 @@ describe('CategoryModel', () => {
     jest.clearAllMocks();
   });
   
-  describe('create', () => {
-    it('should create a new category', async () => {
-      const categoryData = {
-        name: 'Test Category',
-        slug: 'test-category',
-        description: 'A test category',
-        icon: 'icon.png',
-        display_order: 1
-      };
-      
-      const expectedResult = {
-        id: 1,
-        ...categoryData,
-        created_at: new Date(),
-        updated_at: new Date()
-      };
-      
-      mockClient.query.mockResolvedValue({ rows: [expectedResult] });
-      
-      const result = await CategoryModel.create(categoryData);
-      
-      expect(pool.connect).toHaveBeenCalled();
-      expect(mockClient.query).toHaveBeenCalledWith(
-        `INSERT INTO categories (name, slug, description, icon, display_order)
-         VALUES ($1, $2, $3, $4, $5)
-         RETURNING *`,
-        [categoryData.name, categoryData.slug, categoryData.description, categoryData.icon, categoryData.display_order]
-      );
-      expect(result).toEqual(expectedResult);
-      expect(mockClient.release).toHaveBeenCalled();
-    });
-  });
-  
   describe('findAll', () => {
     it('should return all categories ordered by display_order', async () => {
       const categories = [
-        { id: 1, name: 'Category 1', slug: 'cat-1', display_order: 1 },
-        { id: 2, name: 'Category 2', slug: 'cat-2', display_order: 2 }
+        { id: 1, name: 'General', slug: 'general' },
+        { id: 2, name: 'Trading', slug: 'trading' }
       ];
       
       mockClient.query.mockResolvedValue({ rows: categories });
@@ -74,34 +41,16 @@ describe('CategoryModel', () => {
       
       expect(pool.connect).toHaveBeenCalled();
       expect(mockClient.query).toHaveBeenCalledWith(
-        'SELECT * FROM categories ORDER BY display_order ASC'
+        'SELECT * FROM categories ORDER BY display_order ASC, created_at DESC'
       );
       expect(result).toEqual(categories);
       expect(mockClient.release).toHaveBeenCalled();
     });
   });
   
-  describe('findBySlug', () => {
-    it('should return a category by slug', async () => {
-      const category = { id: 1, name: 'Test Category', slug: 'test-category' };
-      
-      mockClient.query.mockResolvedValue({ rows: [category] });
-      
-      const result = await CategoryModel.findBySlug('test-category');
-      
-      expect(pool.connect).toHaveBeenCalled();
-      expect(mockClient.query).toHaveBeenCalledWith(
-        'SELECT * FROM categories WHERE slug = $1',
-        ['test-category']
-      );
-      expect(result).toEqual(category);
-      expect(mockClient.release).toHaveBeenCalled();
-    });
-  });
-  
   describe('findById', () => {
     it('should return a category by id', async () => {
-      const category = { id: 1, name: 'Test Category', slug: 'test-category' };
+      const category = { id: 1, name: 'General', slug: 'general' };
       
       mockClient.query.mockResolvedValue({ rows: [category] });
       
@@ -117,19 +66,67 @@ describe('CategoryModel', () => {
     });
   });
   
-  describe('update', () => {
-    it('should update a category', async () => {
-      const updateData = {
-        name: 'Updated Category',
-        slug: 'updated-category',
-        description: 'An updated category',
-        icon: 'new-icon.png',
-        display_order: 2
+  describe('findBySlug', () => {
+    it('should return a category by slug', async () => {
+      const category = { id: 1, name: 'General', slug: 'general' };
+      
+      mockClient.query.mockResolvedValue({ rows: [category] });
+      
+      const result = await CategoryModel.findBySlug('general');
+      
+      expect(pool.connect).toHaveBeenCalled();
+      expect(mockClient.query).toHaveBeenCalledWith(
+        'SELECT * FROM categories WHERE slug = $1',
+        ['general']
+      );
+      expect(result).toEqual(category);
+      expect(mockClient.release).toHaveBeenCalled();
+    });
+  });
+  
+  describe('create', () => {
+    it('should create a new category', async () => {
+      const categoryData = {
+        name: 'New Category',
+        slug: 'new-category',
+        description: 'A new category'
       };
       
+      const createdCategory = {
+        id: 1,
+        ...categoryData,
+        icon: null,
+        display_order: 0,
+        created_at: new Date(),
+        updated_at: new Date()
+      };
+      
+      mockClient.query.mockResolvedValue({ rows: [createdCategory] });
+      
+      const result = await CategoryModel.create(categoryData);
+      
+      expect(pool.connect).toHaveBeenCalled();
+      expect(mockClient.query).toHaveBeenCalledWith(
+        `INSERT INTO categories (name, slug, description, icon, display_order)
+         VALUES ($1, $2, $3, $4, $5)
+         RETURNING *`,
+        [categoryData.name, categoryData.slug, categoryData.description, null, 0]
+      );
+      expect(result).toEqual(createdCategory);
+      expect(mockClient.release).toHaveBeenCalled();
+    });
+  });
+  
+  describe('update', () => {
+    it('should update a category', async () => {
+      const updateData = { name: 'Updated Category', description: 'Updated description' };
       const updatedCategory = {
         id: 1,
-        ...updateData,
+        name: 'Updated Category',
+        slug: 'general',
+        description: 'Updated description',
+        icon: null,
+        display_order: 0,
         created_at: new Date(),
         updated_at: new Date()
       };
@@ -141,10 +138,10 @@ describe('CategoryModel', () => {
       expect(pool.connect).toHaveBeenCalled();
       expect(mockClient.query).toHaveBeenCalledWith(
         `UPDATE categories
-         SET name = $1, slug = $2, description = $3, icon = $4, display_order = $5, updated_at = NOW()
-         WHERE id = $6
+         SET name = $1, description = $2, updated_at = CURRENT_TIMESTAMP
+         WHERE id = $3
          RETURNING *`,
-        [updateData.name, updateData.slug, updateData.description, updateData.icon, updateData.display_order, 1]
+        [updateData.name, updateData.description, 1]
       );
       expect(result).toEqual(updatedCategory);
       expect(mockClient.release).toHaveBeenCalled();
@@ -153,7 +150,7 @@ describe('CategoryModel', () => {
   
   describe('delete', () => {
     it('should delete a category', async () => {
-      const deletedCategory = { id: 1, name: 'Test Category', slug: 'test-category' };
+      const deletedCategory = { id: 1, name: 'General', slug: 'general' };
       
       mockClient.query.mockResolvedValue({ rows: [deletedCategory] });
       

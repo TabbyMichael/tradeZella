@@ -1,16 +1,23 @@
-import express from 'express';
+import { Router } from 'express';
 import { CategoryController } from '../controllers/category.controller.js';
 import { protect } from '../middleware/auth.middleware.js';
 
-const router = express.Router();
+const router = Router();
 
 // Public routes
-router.get('/', CategoryController.getAllCategories);
-router.get('/:slug', CategoryController.getCategoryBySlug);
+router.route('/')
+  .get(CategoryController.getCategories);
+
+router.route('/:id')
+  .get(CategoryController.getCategory);
 
 // Protected routes (admin only)
-router.post('/', protect, CategoryController.createCategory);
-router.put('/:id', protect, CategoryController.updateCategory);
-router.delete('/:id', protect, CategoryController.deleteCategory);
+router.use(protect);
+router.route('/')
+  .post(CategoryController.createCategory);
+
+router.route('/:id')
+  .put(CategoryController.updateCategory)
+  .delete(CategoryController.deleteCategory);
 
 export default router;

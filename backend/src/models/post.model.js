@@ -1,40 +1,19 @@
 import { pool } from '../db.js';
 
 export class PostModel {
-  static async create({ thread_id, user_id, parent_post_id, content }) {
+  static async findByThreadId(thread_id, options = {}) {
     const client = await pool.connect();
     try {
-      const result = await client.query(
-        `INSERT INTO posts (thread_id, user_id, parent_post_id, content)
-         VALUES ($1, $2, $3, $4)
-         RETURNING *`,
-        [thread_id, user_id, parent_post_id, content]
-      );
+      const { limit = 50, offset = 0 } = options;
       
-      // Update the reply count in the thread
-      await client.query(
-        `UPDATE threads
-         SET reply_count = reply_count + 1, last_activity_at = NOW()
-         WHERE id = $1`,
-        [thread_id]
-      );
-      
-      return result.rows[0];
-    } finally {
-      client.release();
-    }
-  }
-
-  static async findByThreadId(thread_id) {
-    const client = await pool.connect();
-    try {
       const result = await client.query(
         `SELECT p.*, u.name as author_name
          FROM posts p
          JOIN users u ON p.user_id = u.id
          WHERE p.thread_id = $1
-         ORDER BY p.created_at ASC`,
-        [thread_id]
+         ORDER BY p.created_at ASC
+         LIMIT $2 OFFSET $3`,
+        [thread_id, limit, offset]
       );
       return result.rows;
     } finally {
@@ -58,7 +37,32 @@ export class PostModel {
     }
   }
 
-  static async update(id, { content }) {
+  static async create(postData) {
+    const client = await pool.connect();
+    try {
+      const { thread_id, user_id, parent_post_id, content } = postData;
+      const result = await client.query(
+        `INSERT INTO posts (thread_id, user_id, parent_post_id, content)
+         VALUES ($1, $2, $3, $4)
+         RETURNING *`,
+        [thread_id, user_id, parent_post_id, content]
+      );
+      
+      // Update the reply count in the thread
+      await client.query(
+        `UPDATE threads
+         SET reply_count = reply_count + 1, last_activity_at = NOW()
+         WHERE id = $1`,
+        [thread_id]
+      );
+      
+      return result.rows[0];
+    } finally {
+      client.release();
+    }
+  }
+
+  static async update(id, postData) {
     const client = await pool.connect();
     try {
       const result = await client.query(
@@ -66,7 +70,7 @@ export class PostModel {
          SET content = $1, updated_at = NOW()
          WHERE id = $2
          RETURNING *`,
-        [content, id]
+        [postData.content, id]
       );
       return result.rows[0];
     } finally {
