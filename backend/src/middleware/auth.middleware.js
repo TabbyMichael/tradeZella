@@ -1,5 +1,5 @@
 import jwt from 'jsonwebtoken';
-import { getDb } from '../db.js';
+import { pool } from '../db.js';
 
 export const protect = async (req, res, next) => {
   let token;
@@ -8,27 +8,34 @@ export const protect = async (req, res, next) => {
     try {
       // Get token from header
       token = req.headers.authorization.split(' ')[1];
+      console.log('Token received:', token);
 
       // Verify token
       const decoded = jwt.verify(token, process.env.JWT_SECRET || 'your_jwt_secret');
+      console.log('Decoded token:', decoded);
 
       // Get user from the token
-      const db = await getDb();
-      // Select only non-sensitive fields
-      req.user = await db.get('SELECT id, email, name FROM users WHERE id = ?', [decoded.id]);
+      const client = await pool.connect();
+      try {
+        const result = await client.query('SELECT id, email, name, role FROM users WHERE id = $1', [decoded.id]);
+        req.user = result.rows[0];
+        console.log('User found:', req.user);
 
-      if (!req.user) {
-        return res.status(401).json({ message: 'Not authorized, user not found' });
+        if (!req.user) {
+          console.log('User not found in database');
+          return res.status(401).json({ message: 'Not authorized, user not found' });
+        }
+
+        next();
+      } finally {
+        client.release();
       }
-
-      next();
     } catch (error) {
-      console.error(error);
-      res.status(401).json({ message: 'Not authorized, token failed' });
+      console.error('Token verification error:', error);
+      return res.status(401).json({ message: 'Not authorized, token failed' });
     }
-  }
-
-  if (!token) {
-    res.status(401).json({ message: 'Not authorized, no token' });
+  } else {
+    console.log('No token provided');
+    return res.status(401).json({ message: 'Not authorized, no token' });
   }
 };

@@ -1,59 +1,101 @@
-import { getDb } from '../db.js';
+import { pool } from '../db.js';
 
 export class TradeService {
   static async createTrade({ userId, symbol, direction, size, entryPrice, exitPrice, notes }) {
-    const db = await getDb();
-    const result = await db.run(
-      'INSERT INTO trades (userId, symbol, direction, size, entryPrice, exitPrice, notes) VALUES (?, ?, ?, ?, ?, ?, ?)',
-      [userId, symbol, direction, size, entryPrice, exitPrice, notes]
-    );
-    return { id: result.lastID, userId, symbol, direction, size, entryPrice, exitPrice, notes };
+    const client = await pool.connect();
+    try {
+      const result = await client.query(
+        `INSERT INTO trades (userId, symbol, direction, size, entryPrice, exitPrice, notes) 
+         VALUES ($1, $2, $3, $4, $5, $6, $7) 
+         RETURNING *`,
+        [userId, symbol, direction, size, entryPrice, exitPrice, notes]
+      );
+      return result.rows[0];
+    } finally {
+      client.release();
+    }
   }
 
   static async getTradesByUserId(userId) {
-    const db = await getDb();
-    const trades = await db.all('SELECT * FROM trades WHERE userId = ? ORDER BY createdAt DESC', [userId]);
-    return trades;
+    const client = await pool.connect();
+    try {
+      const result = await client.query(
+        'SELECT * FROM trades WHERE userId = $1 ORDER BY createdAt DESC', 
+        [userId]
+      );
+      return result.rows;
+    } finally {
+      client.release();
+    }
   }
 
   static async getTradeById(id, userId) {
-    const db = await getDb();
-    const trade = await db.get('SELECT * FROM trades WHERE id = ? AND userId = ?', [id, userId]);
-    return trade;
+    const client = await pool.connect();
+    try {
+      const result = await client.query(
+        'SELECT * FROM trades WHERE id = $1 AND userId = $2', 
+        [id, userId]
+      );
+      return result.rows[0];
+    } finally {
+      client.release();
+    }
   }
 
   static async updateTrade(id, userId, tradeData) {
-    const db = await getDb();
-    const existingTrade = await this.getTradeById(id, userId);
-    if (!existingTrade) {
-      return null;
+    const client = await pool.connect();
+    try {
+      const existingTrade = await this.getTradeById(id, userId);
+      if (!existingTrade) {
+        return null;
+      }
+
+      // Build dynamic update query to only update provided fields
+      const fields = [];
+      const values = [];
+      let index = 1;
+
+      Object.keys(tradeData).forEach(key => {
+        if (tradeData[key] !== undefined) {
+          fields.push(`${key} = $${index}`);
+          values.push(tradeData[key]);
+          index++;
+        }
+      });
+
+      if (fields.length === 0) {
+        return existingTrade; // Nothing to update
+      }
+
+      values.push(id, userId); // Add id and userId for WHERE clause
+
+      const result = await client.query(
+        `UPDATE trades 
+         SET ${fields.join(', ')}, updatedAt = CURRENT_TIMESTAMP 
+         WHERE id = $${index} AND userId = $${index + 1}
+         RETURNING *`,
+        values
+      );
+
+      if (result.rowCount === 0) {
+        return null; // Should not happen if existingTrade was found
+      }
+      return result.rows[0];
+    } finally {
+      client.release();
     }
-
-    const updatedTradeData = { ...existingTrade, ...tradeData };
-
-    const result = await db.run(
-      'UPDATE trades SET symbol = ?, direction = ?, size = ?, entryPrice = ?, exitPrice = ?, notes = ?, updatedAt = CURRENT_TIMESTAMP WHERE id = ? AND userId = ?',
-      [
-        updatedTradeData.symbol,
-        updatedTradeData.direction,
-        updatedTradeData.size,
-        updatedTradeData.entryPrice,
-        updatedTradeData.exitPrice,
-        updatedTradeData.notes,
-        id,
-        userId,
-      ]
-    );
-
-    if (result.changes === 0) {
-      return null; // Should not happen if existingTrade was found
-    }
-    return this.getTradeById(id, userId);
   }
 
   static async deleteTrade(id, userId) {
-    const db = await getDb();
-    const result = await db.run('DELETE FROM trades WHERE id = ? AND userId = ?', [id, userId]);
-    return result.changes > 0;
+    const client = await pool.connect();
+    try {
+      const result = await client.query(
+        'DELETE FROM trades WHERE id = $1 AND userId = $2', 
+        [id, userId]
+      );
+      return result.rowCount > 0;
+    } finally {
+      client.release();
+    }
   }
 }
