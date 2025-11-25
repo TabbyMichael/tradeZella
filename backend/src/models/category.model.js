@@ -1,9 +1,48 @@
 import { pool } from '../db.js';
 
 export class CategoryModel {
-  static async create({ name, slug, description, icon, display_order }) {
+  static async findAll() {
     const client = await pool.connect();
     try {
+      const result = await client.query(
+        'SELECT * FROM categories ORDER BY display_order ASC, created_at DESC'
+      );
+      return result.rows;
+    } finally {
+      client.release();
+    }
+  }
+
+  static async findById(id) {
+    const client = await pool.connect();
+    try {
+      const result = await client.query(
+        'SELECT * FROM categories WHERE id = $1',
+        [id]
+      );
+      return result.rows[0];
+    } finally {
+      client.release();
+    }
+  }
+
+  static async findBySlug(slug) {
+    const client = await pool.connect();
+    try {
+      const result = await client.query(
+        'SELECT * FROM categories WHERE slug = $1',
+        [slug]
+      );
+      return result.rows[0];
+    } finally {
+      client.release();
+    }
+  }
+
+  static async create(categoryData) {
+    const client = await pool.connect();
+    try {
+      const { name, slug, description, icon, display_order = 0 } = categoryData;
       const result = await client.query(
         `INSERT INTO categories (name, slug, description, icon, display_order)
          VALUES ($1, $2, $3, $4, $5)
@@ -16,45 +55,32 @@ export class CategoryModel {
     }
   }
 
-  static async findAll() {
+  static async update(id, categoryData) {
     const client = await pool.connect();
     try {
-      const result = await client.query('SELECT * FROM categories ORDER BY display_order ASC');
-      return result.rows;
-    } finally {
-      client.release();
-    }
-  }
+      const fields = [];
+      const values = [];
+      let index = 1;
 
-  static async findBySlug(slug) {
-    const client = await pool.connect();
-    try {
-      const result = await client.query('SELECT * FROM categories WHERE slug = $1', [slug]);
-      return result.rows[0];
-    } finally {
-      client.release();
-    }
-  }
+      Object.keys(categoryData).forEach(key => {
+        if (categoryData[key] !== undefined) {
+          fields.push(`${key} = $${index}`);
+          values.push(categoryData[key]);
+          index++;
+        }
+      });
 
-  static async findById(id) {
-    const client = await pool.connect();
-    try {
-      const result = await client.query('SELECT * FROM categories WHERE id = $1', [id]);
-      return result.rows[0];
-    } finally {
-      client.release();
-    }
-  }
+      if (fields.length === 0) {
+        throw new Error('No fields to update');
+      }
 
-  static async update(id, { name, slug, description, icon, display_order }) {
-    const client = await pool.connect();
-    try {
+      values.push(id);
       const result = await client.query(
         `UPDATE categories
-         SET name = $1, slug = $2, description = $3, icon = $4, display_order = $5, updated_at = NOW()
-         WHERE id = $6
+         SET ${fields.join(', ')}, updated_at = CURRENT_TIMESTAMP
+         WHERE id = $${index}
          RETURNING *`,
-        [name, slug, description, icon, display_order, id]
+        values
       );
       return result.rows[0];
     } finally {
@@ -65,7 +91,10 @@ export class CategoryModel {
   static async delete(id) {
     const client = await pool.connect();
     try {
-      const result = await client.query('DELETE FROM categories WHERE id = $1 RETURNING *', [id]);
+      const result = await client.query(
+        'DELETE FROM categories WHERE id = $1 RETURNING *',
+        [id]
+      );
       return result.rows[0];
     } finally {
       client.release();

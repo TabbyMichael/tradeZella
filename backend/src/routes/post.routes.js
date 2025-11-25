@@ -1,16 +1,26 @@
-import express from 'express';
+import { Router } from 'express';
 import { PostController } from '../controllers/post.controller.js';
 import { protect } from '../middleware/auth.middleware.js';
 
-const router = express.Router({ mergeParams: true });
+const router = Router({ mergeParams: true });
 
 // Public routes
-router.get('/thread/:threadId', PostController.getPostsByThreadId);
+router.route('/')
+  .get(PostController.getPosts);
+
+router.route('/:id')
+  .get(PostController.getPost);
 
 // Protected routes
-router.post('/', protect, PostController.createPost);
-router.put('/:id', protect, PostController.updatePost);
-router.delete('/:id', protect, PostController.deletePost);
-router.post('/:id/best-answer', protect, PostController.markAsBestAnswer);
+router.use(protect);
+router.route('/')
+  .post(PostController.createPost);
+
+router.route('/:id')
+  .put(PostController.updatePost)
+  .delete(PostController.deletePost);
+
+router.route('/:id/best-answer')
+  .post(PostController.markAsBestAnswer);
 
 export default router;

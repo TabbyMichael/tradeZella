@@ -72,4 +72,106 @@ export class UserModel {
       client.release();
     }
   }
+
+  static async updateStats(userId, stats) {
+    const client = await pool.connect();
+    try {
+      const fields = [];
+      const values = [];
+      let index = 1;
+
+      Object.keys(stats).forEach(key => {
+        if (stats[key] !== undefined) {
+          fields.push(`${key} = $${index}`);
+          values.push(stats[key]);
+          index++;
+        }
+      });
+
+      if (fields.length === 0) {
+        throw new Error('No fields to update');
+      }
+
+      values.push(userId);
+      const result = await client.query(
+        `UPDATE users
+         SET ${fields.join(', ')}
+         WHERE id = $${index}
+         RETURNING *`,
+        values
+      );
+      return result.rows[0];
+    } finally {
+      client.release();
+    }
+  }
+
+  static async incrementPostCount(userId) {
+    const client = await pool.connect();
+    try {
+      const result = await client.query(
+        'UPDATE users SET post_count = post_count + 1 WHERE id = $1 RETURNING *',
+        [userId]
+      );
+      return result.rows[0];
+    } finally {
+      client.release();
+    }
+  }
+
+  static async incrementThreadCount(userId) {
+    const client = await pool.connect();
+    try {
+      const result = await client.query(
+        'UPDATE users SET thread_count = thread_count + 1 WHERE id = $1 RETURNING *',
+        [userId]
+      );
+      return result.rows[0];
+    } finally {
+      client.release();
+    }
+  }
+
+  static async getTopUsersByReputation(limit = 10) {
+    const client = await pool.connect();
+    try {
+      const result = await client.query(
+        'SELECT id, name, avatar_url, reputation, xp FROM users ORDER BY reputation DESC, xp DESC LIMIT $1',
+        [limit]
+      );
+      return result.rows;
+    } finally {
+      client.release();
+    }
+  }
+
+  static async getTopUsersByXP(limit = 10) {
+    const client = await pool.connect();
+    try {
+      const result = await client.query(
+        'SELECT id, name, avatar_url, reputation, xp FROM users ORDER BY xp DESC, reputation DESC LIMIT $1',
+        [limit]
+      );
+      return result.rows;
+    } finally {
+      client.release();
+    }
+  }
+
+  static async searchUsers(query, limit = 20) {
+    const client = await pool.connect();
+    try {
+      const result = await client.query(
+        `SELECT id, name, avatar_url, bio, reputation, xp
+         FROM users 
+         WHERE name ILIKE $1 OR bio ILIKE $1
+         ORDER BY reputation DESC, xp DESC
+         LIMIT $2`,
+        [`%${query}%`, limit]
+      );
+      return result.rows;
+    } finally {
+      client.release();
+    }
+  }
 }
