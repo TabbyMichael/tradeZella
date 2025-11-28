@@ -1,6 +1,9 @@
+import dotenv from 'dotenv';
+// Load environment variables first
+dotenv.config({ path: '.env' });
+
 import express from 'express';
 import cors from 'cors';
-import dotenv from 'dotenv';
 import session from 'express-session';
 import passport from 'passport';
 import { initDb } from './db.js';
@@ -12,6 +15,10 @@ import postRouter from './routes/post.routes.js';
 import tagRouter from './routes/tag.routes.js';
 import reactionRouter from './routes/reaction.routes.js';
 import followRouter from './routes/follow.routes.js';
+import playbookRouter from './routes/playbook.routes.js';
+import backtestingRouter from './routes/backtesting.routes.js';
+import reportRouter from './routes/report.routes.js';
+import brokerRouter from './routes/broker.routes.js';
 import errorHandler from './middleware/errorHandler.js';
 import './services/passport.js';
 
@@ -21,7 +28,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 app.use(session({
-  secret: 'your_session_secret', // Replace with a real secret in production
+  secret: process.env.SESSION_SECRET || 'your_session_secret', // Replace with a real secret in production
   resave: false,
   saveUninitialized: false,
 }));
@@ -42,6 +49,10 @@ app.use('/api/community/posts', postRouter);
 app.use('/api/community/tags', tagRouter);
 app.use('/api/community/reactions', reactionRouter);
 app.use('/api/community/follow', followRouter);
+app.use('/api/playbooks', playbookRouter);
+app.use('/api/backtesting', backtestingRouter);
+app.use('/api/reports', reportRouter);
+app.use('/api/brokers', brokerRouter);
 
 app.use(errorHandler);
 

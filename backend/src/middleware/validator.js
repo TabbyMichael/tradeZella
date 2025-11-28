@@ -17,11 +17,17 @@ export const loginValidationRules = () => {
 export const tradeValidationRules = () => {
   return [
     body('symbol').notEmpty().withMessage('Symbol is required').isString().withMessage('Symbol must be a string'),
-    body('direction').isIn(['buy', 'sell']).withMessage('Direction must be either "buy" or "sell"'),
+    body('direction').isIn(['buy', 'sell', 'short', 'cover']).withMessage('Direction must be one of "buy", "sell", "short", or "cover"'),
     body('size').isFloat({ gt: 0 }).withMessage('Size must be a positive number'),
     body('entryPrice').isFloat({ gt: 0 }).withMessage('Entry price must be a positive number'),
     body('exitPrice').optional().isFloat({ gt: 0 }).withMessage('Exit price must be a positive number'),
     body('notes').optional().isString().withMessage('Notes must be a string'),
+    body('tradeDate').optional().isISO8601().toDate().withMessage('Trade date must be a valid date'),
+    body('tags').optional().isArray().withMessage('Tags must be an array of strings'),
+    body('tags.*').optional().isString().withMessage('Each tag must be a string'),
+    body('sentiment').optional().isString().withMessage('Sentiment must be a string'),
+    body('screenshots').optional().isArray().withMessage('Screenshots must be an array of strings (URLs)'),
+    body('screenshots.*').optional().isURL().withMessage('Each screenshot must be a valid URL'),
   ];
 };
 

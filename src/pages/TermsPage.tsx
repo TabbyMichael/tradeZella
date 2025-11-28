@@ -5,46 +5,64 @@ export default function TermsPage() {
   return (
     <LegalPageLayout
       title="Terms of Service"
-      description="Last updated: September 18, 2025"
+      description="Last Updated: September 18, 2025"
     >
-      <p>
-        Please read these terms of service carefully before using the TradeZella platform. Your access to and use of the Service is conditioned on your acceptance of and compliance with these Terms. These Terms apply to all visitors, users, and others who access or use the Service.
-      </p>
+      <h2>1. Acceptance of Terms</h2>
+      <p>By accessing or using TradeZella ("the Platform"), you agree to be bound by these Terms of Service ("Terms"). If you do not agree, do not use the Platform.</p>
 
-      <h2>1. Accounts</h2>
-      <p>
-        When you create an account with us, you must provide us with information that is accurate, complete, and current at all times. Failure to do so constitutes a breach of the Terms, which may result in immediate termination of your account on our Service.
-      </p>
+      <h2>2. Eligibility</h2>
+      <p>You must be at least 18 years old and have the legal authority to enter into this agreement.</p>
 
-      <h2>2. Intellectual Property</h2>
-      <p>
-        The Service and its original content, features, and functionality are and will remain the exclusive property of TradeZella and its licensors. The Service is protected by copyright, trademark, and other laws of both the United States and foreign countries.
-      </p>
+      <h2>3. User Accounts</h2>
+      <p>You are responsible for:</p>
+      <ul>
+        <li>Maintaining the confidentiality of your login credentials</li>
+        <li>All activity under your account</li>
+      </ul>
+      <p>We may suspend or terminate accounts that violate these Terms.</p>
 
-      <h2>3. Links To Other Web Sites</h2>
-      <p>
-        Our Service may contain links to third-party web sites or services that are not owned or controlled by TradeZella. TradeZella has no control over, and assumes no responsibility for, the content, privacy policies, or practices of any third-party web sites or services.
-      </p>
+      <h2>4. Services Provided</h2>
+      <p>TradeZella provides trading journal, community forum, and analytics services. We may modify or discontinue features at any time.</p>
 
-      <h2>4. Limitation Of Liability</h2>
-      <p>
-        In no event shall TradeZella, nor its directors, employees, partners, agents, suppliers, or affiliates, be liable for any indirect, incidental, special, consequential or punitive damages, including without limitation, loss of profits, data, use, goodwill, or other intangible losses, resulting from your access to or use of or inability to access or use the Service.
-      </p>
+      <h2>5. User Responsibilities</h2>
+      <p>You agree not to:</p>
+      <ul>
+        <li>Use the platform for unlawful activities</li>
+        <li>Attempt to access restricted systems</li>
+        <li>Upload harmful or misleading content</li>
+        <li>Reverse-engineer any part of the platform</li>
+      </ul>
 
-      <h2>5. Governing Law</h2>
-      <p>
-        These Terms shall be governed and construed in accordance with the laws of the State of California, without regard to its conflict of law provisions.
-      </p>
+      <h2>6. Payments & Fees</h2>
+      <p>Prices, taxes, and payment terms are displayed at checkout. All charges are final unless stated otherwise.</p>
 
-      <h2>6. Changes</h2>
-      <p>
-        We reserve the right, at our sole discretion, to modify or replace these Terms at any time. If a revision is material we will try to provide at least 30 days notice prior to any new terms taking effect. What constitutes a material change will be determined at our sole discretion.
-      </p>
+      <h2>7. Intellectual Property</h2>
+      <p>All content, branding, design, and software belong to TradeZella. You may not copy, redistribute, or modify without written approval.</p>
 
-      <h2>7. Contact Us</h2>
-      <p>
-        If you have any questions about these Terms, please contact us at support@tradezella.com.
-      </p>
+      <h2>8. Third-Party Services</h2>
+      <p>We may integrate with third-party services. Their terms govern your use of those services.</p>
+
+      <h2>9. Disclaimer of Warranties</h2>
+      <p>The platform is provided "as-is" and "as available." We do not guarantee uninterrupted or error-free service.</p>
+
+      <h2>10. Limitation of Liability</h2>
+      <p>TradeZella is not liable for:</p>
+      <ul>
+        <li>Loss of revenue</li>
+        <li>Loss of data</li>
+        <li>Indirect or consequential damages</li>
+      </ul>
+      <p>Maximum liability = amount you paid to us within the last 12 months.</p>
+
+      <h2>11. Termination</h2>
+      <p>We may suspend or terminate your access for any violation of these Terms.</p>
+
+      <h2>12. Governing Law</h2>
+      <p>These Terms are governed by the laws of the State of California, without regard to conflict-of-law rules.</p>
+
+      <h2>13. Contact</h2>
+      <p>For questions:<br />
+      📩 support@tradezella.com</p>
     </LegalPageLayout>
   );
 }
