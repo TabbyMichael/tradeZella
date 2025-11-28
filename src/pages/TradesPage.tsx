@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import Button from '../components/common/Button';
 
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+
 // Define a type for the trade object for type safety
 interface Trade {
   id: number;
@@ -30,7 +32,7 @@ const TradesPage: React.FC = () => {
           return;
         }
 
-        const response = await axios.get('http://localhost:3001/api/trades', {
+        const response = await axios.get(`${API_BASE_URL}/api/trades`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -86,8 +88,8 @@ const TradesPage: React.FC = () => {
                   <td className="px-5 py-5 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-sm">{trade.entryPrice}</td>
                   <td className="px-5 py-5 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-sm">{trade.exitPrice || '-'}</td>
                   <td className="px-5 py-5 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-sm">
-                    <Button variant="secondary" size="sm" className="mr-2">Edit</Button>
-                    <Button variant="danger" size="sm">Delete</Button>
+                    <Button variant="primary" className="mr-2 text-sm px-3 py-1">Edit</Button>
+                    <Button variant="gradient" className="text-sm px-3 py-1">Delete</Button>
                   </td>
                 </tr>
               ))

@@ -25,23 +25,14 @@ async function runMigrations() {
       const filePath = path.join(migrationDir, file);
       const sql = fs.readFileSync(filePath, 'utf8');
       
-      // Split the file into individual statements (simple approach)
-      const statements = sql
-        .split(';')
-        .map(stmt => stmt.trim())
-        .filter(stmt => stmt.length > 0);
-      
-      for (const statement of statements) {
-        if (statement.trim()) {
-          try {
-            await client.query(statement);
-            console.log('Statement executed successfully');
-          } catch (err) {
-            console.error('Error executing statement:', err);
-            console.error('Statement:', statement);
-            throw err;
-          }
-        }
+      // Execute the entire file content as a single query
+      try {
+        await client.query(sql);
+        console.log('Migration file executed successfully');
+      } catch (err) {
+        console.error('Error executing migration file:', err);
+        console.error('File:', file);
+        throw err;
       }
       
       console.log(`Completed migration: ${file}\n`);

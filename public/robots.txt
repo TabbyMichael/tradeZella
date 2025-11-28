@@ -1,0 +1,12 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://tradezella.com/sitemap.xml
+
+# Block access to private directories
+Disallow: /api/
+Disallow: /admin/
+Disallow: /private/
+
+# Crawl delay for search engines
+Crawl-delay: 10

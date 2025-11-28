@@ -7,13 +7,14 @@
     "start:frontend": "vite",
     "start:backend": "nodemon backend/src/index.js",
     "dev": "concurrently \"npm run start:frontend\" \"npm run start:backend\"",
-    "build": "vite build",
+    "build": "vite build && node scripts/generate-sitemap.js",
     "lint": "eslint .",
     "preview": "vite preview",
     "test": "jest",
     "test:unit": "jest __tests__/unit",
     "test:integration": "jest __tests__/integration",
-    "test:e2e": "jest __tests__/e2e"
+    "test:e2e": "jest __tests__/e2e",
+    "sitemap": "node scripts/generate-sitemap.js"
   },
   "dependencies": {
     "@heroicons/react": "^2.2.0",
@@ -32,6 +33,7 @@
     "pg": "^8.16.3",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
+    "react-helmet-async": "^2.0.5",
     "react-router-dom": "^6.22.1"
   },
   "devDependencies": {

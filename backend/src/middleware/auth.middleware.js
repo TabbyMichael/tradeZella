@@ -17,7 +17,7 @@ export const protect = async (req, res, next) => {
       // Get user from the token
       const client = await pool.connect();
       try {
-        const result = await client.query('SELECT id, email, name, role FROM users WHERE id = $1', [decoded.id]);
+        const result = await client.query('SELECT id, email, name, role FROM users WHERE id = $1', [decoded.userId]);
         req.user = result.rows[0];
         console.log('User found:', req.user);
 
