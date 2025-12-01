@@ -33,8 +33,8 @@ const TradesPage: React.FC = () => {
         const data = await getUserTrades(token);
         setTrades(data);
         setError(null);
-      } catch (err: any) {
-        setError(err.message || 'Failed to fetch trades.');
+      } catch (err) {
+        setError((err as Error).message || 'Failed to fetch trades.');
       } finally {
         setLoading(false);
       }
