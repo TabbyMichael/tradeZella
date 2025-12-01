@@ -19,10 +19,14 @@ import playbookRouter from './routes/playbook.routes.js';
 import backtestingRouter from './routes/backtesting.routes.js';
 import reportRouter from './routes/report.routes.js';
 import brokerRouter from './routes/broker.routes.js';
+import dashboardRouter from './routes/dashboard.routes.js';
 import errorHandler from './middleware/errorHandler.js';
 import './services/passport.js';
 
 const app = express();
+
+// Export the app instance for testing or other modules that need it
+export default app;
 
 // Middleware
 app.use(cors());
@@ -53,26 +57,26 @@ app.use('/api/playbooks', playbookRouter);
 app.use('/api/backtesting', backtestingRouter);
 app.use('/api/reports', reportRouter);
 app.use('/api/brokers', brokerRouter);
+app.use('/api/dashboard', dashboardRouter);
 
 app.use(errorHandler);
 
-// Initialize database and start server
-const startServer = async () => {
-  try {
-    // Initialize database tables
-    await initDb();
-    
-    // Start the server
-    const PORT = process.env.PORT || 5000;
-    app.listen(PORT, () => {
-      console.log(`Server running on port ${PORT}`);
-    });
-  } catch (error) {
-    console.error('Failed to start server:', error);
-    process.exit(1);
-  }
-};
-
-startServer();
-
-export default app;
+// Only start the server if this file is executed directly (not imported for testing)
+if (process.env.NODE_ENV !== 'test' && !process.env.JEST_WORKER_ID) {
+  const startServer = async () => {
+    try {
+      // Initialize database tables
+      await initDb();
+      
+      // Start the server
+      const PORT = process.env.PORT || 5000;
+      app.listen(PORT, () => {
+        console.log(`Server running on port ${PORT}`);
+      });
+    } catch (error) {
+      console.error('Failed to start server:', error);
+      process.exit(1);
+    }
+  };
+  startServer();
+}

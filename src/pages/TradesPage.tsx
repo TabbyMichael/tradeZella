@@ -1,3 +1,9 @@
+import React, { useState, useEffect, useCallback } from 'react';
+import axios from 'axios';
+import Button from '../components/common/Button';
+import CSVUploader from '../components/CSVUploader'; // Import the new component
+
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 import React, { useState, useEffect } from 'react';
 import Button from '../components/common/Button';
 import { getUserTrades } from '../services/api';
@@ -8,10 +14,10 @@ interface Trade {
   symbol: string;
   direction: 'buy' | 'sell';
   size: number;
-  entryPrice: number;
-  exitPrice?: number;
+  entryprice: number; // Corrected to match backend response
+  exitprice?: number;
   notes?: string;
-  createdAt: string;
+  createdat: string; // Corrected to match backend response
 }
 
 const TradesPage: React.FC = () => {
@@ -19,6 +25,12 @@ const TradesPage: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  const fetchTrades = useCallback(async () => {
+    try {
+      setLoading(true);
+      const token = localStorage.getItem('token');
+      if (!token) {
+        setError('No authentication token found. Please log in.');
   useEffect(() => {
     const fetchTrades = async () => {
       try {
@@ -37,17 +49,34 @@ const TradesPage: React.FC = () => {
         setError(err.message || 'Failed to fetch trades.');
       } finally {
         setLoading(false);
+        return;
       }
-    };
 
-    fetchTrades();
+      const response = await axios.get<{ data: Trade[] }>(`${API_BASE_URL}/api/trades`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      
+      // The actual trade data is in response.data.data
+      setTrades(response.data.data || []);
+      setError(null);
+    } catch (err: any) {
+      setError(err.response?.data?.message || 'Failed to fetch trades.');
+    } finally {
+      setLoading(false);
+    }
   }, []);
 
-  if (loading) {
+  useEffect(() => {
+    fetchTrades();
+  }, [fetchTrades]);
+
+  if (loading && trades.length === 0) { // Only show full page loader on initial load
     return <div className="container mx-auto p-4">Loading trades...</div>;
   }
 
-  if (error) {
+  if (error && trades.length === 0) {
     return <div className="container mx-auto p-4 text-red-500">{error}</div>;
   }
 
@@ -57,6 +86,12 @@ const TradesPage: React.FC = () => {
         <h1 className="text-2xl font-bold text-gray-900 dark:text-white">My Trades</h1>
         <Button variant="primary">Add New Trade</Button>
       </div>
+
+      {/* CSV Uploader Component */}
+      <div className="mb-6">
+        <CSVUploader onUploadSuccess={fetchTrades} />
+      </div>
+
       <div className="bg-white dark:bg-gray-800 shadow-md rounded-lg overflow-hidden">
         <table className="min-w-full leading-normal">
           <thead>
@@ -74,12 +109,12 @@ const TradesPage: React.FC = () => {
             {trades.length > 0 ? (
               trades.map((trade) => (
                 <tr key={trade.id}>
-                  <td className="px-5 py-5 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-sm">{new Date(trade.createdAt).toLocaleDateString()}</td>
+                  <td className="px-5 py-5 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-sm">{new Date(trade.createdat).toLocaleDateString()}</td>
                   <td className="px-5 py-5 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-sm">{trade.symbol}</td>
                   <td className="px-5 py-5 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-sm">{trade.direction}</td>
                   <td className="px-5 py-5 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-sm">{trade.size}</td>
-                  <td className="px-5 py-5 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-sm">{trade.entryPrice}</td>
-                  <td className="px-5 py-5 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-sm">{trade.exitPrice || '-'}</td>
+                  <td className="px-5 py-5 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-sm">{trade.entryprice}</td>
+                  <td className="px-5 py-5 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-sm">{trade.exitprice || '-'}</td>
                   <td className="px-5 py-5 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-sm">
                     <Button variant="primary" className="mr-2 text-sm px-3 py-1">Edit</Button>
                     <Button variant="gradient" className="text-sm px-3 py-1">Delete</Button>

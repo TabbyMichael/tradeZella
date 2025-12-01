@@ -8,7 +8,7 @@ const router = Router();
 router.use(protect);
 
 // Follow routes
-router.route('/follow/:userId')
+router.route('/:userId')
   .post(FollowController.followUser)
   .delete(FollowController.unfollowUser);
 

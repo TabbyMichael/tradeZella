@@ -3,7 +3,8 @@ import { FollowModel } from '../models/follow.model.js';
 export class FollowService {
   static async followUser(followerId, followedId) {
     // Prevent users from following themselves
-    if (followerId === followedId) {
+    // Convert both IDs to integers for proper comparison
+    if (parseInt(followerId) === parseInt(followedId)) {
       throw new Error('Cannot follow yourself');
     }
     

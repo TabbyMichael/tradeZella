@@ -42,6 +42,7 @@ import ForgotPasswordPage from './pages/ForgotPasswordPage';
 import OAuthCallbackPage from './pages/OAuthCallbackPage';
 import ResetPasswordPage from './pages/ResetPasswordPage';
 import TradesPage from './pages/TradesPage';
+import DashboardPage from './pages/DashboardPage';
 import { LoadingProvider, useLoading } from './components/common/LoadingContext';
 import { ThemeProvider } from './components/common/ThemeContext';
 
@@ -60,7 +61,8 @@ function AppContent() {
       {isLoading && <Loader />}
       <Navbar />
       <Routes>
-        <Route path="/" element={
+        <Route path="/" element={<DashboardPage />} />
+        <Route path="/home" element={
           <>
             <Helmet>
               <title>TradeZella - Trading Journal & Community Platform</title>

@@ -8,23 +8,29 @@ describe('Follow API', () => {
   let testUser2;
   let authToken1;
   let authToken2;
+  let client; // Declare client here to be accessible throughout the describe block
   
   beforeAll(async () => {
-    // Clear any existing test data
-    await clearTestData();
+    client = await pool.connect(); // Acquire a client from the pool
     
-    // Create test users
+    // Clear any existing test data using the acquired client
+    await clearTestData(client);
+    
+    // Create test users using the acquired client
     testUser1 = await createTestUser({
       email: 'follower@example.com',
       password: 'FollowerPass123!',
       name: 'Follower User'
-    });
+    }, client);
     
     testUser2 = await createTestUser({
       email: 'followed@example.com',
       password: 'FollowedPass123!',
       name: 'Followed User'
-    });
+    }, client);
+    
+    console.log(`[follow.integration.test.js] Created testUser1 with id: ${testUser1.id}`);
+    console.log(`[follow.integration.test.js] Created testUser2 with id: ${testUser2.id}`);
     
     // Generate auth tokens
     authToken1 = generateTestToken(testUser1);
@@ -32,11 +38,11 @@ describe('Follow API', () => {
   });
   
   afterAll(async () => {
-    // Clean up test data
-    await clearTestData();
+    // Clean up test data using the acquired client
+    await clearTestData(client);
     
-    // Close database connection
-    await pool.end();
+    client.release(); // Release the client back to the pool
+    await pool.end(); // Close database connection for the pool
   });
   
   describe('POST /api/community/follow/:userId', () => {
