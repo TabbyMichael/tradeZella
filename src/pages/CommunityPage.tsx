@@ -1,46 +1,23 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { ShieldCheckIcon, StarIcon, FireIcon, RssIcon, ChatBubbleLeftRightIcon, UserGroupIcon } from '@heroicons/react/24/outline';
 import SectionHeading from '../components/common/SectionHeading';
+import { getCommunityCategories } from '../services/api';
 import './Forum.css';
 
-const categories = [
-  {
-    name: 'Trade Journals',
-    description: 'Share your trades and track your progress with the community.',
-    icon: <StarIcon className="h-8 w-8 text-yellow-500" />,
-    link: '#',
-  },
-  {
-    name: 'Market Discussions',
-    description: 'Discuss market trends, news, and general analysis.',
-    icon: <ChatBubbleLeftRightIcon className="h-8 w-8 text-sky-500" />,
-    link: '#',
-  },
-  {
-    name: 'Strategies & Playbooks',
-    description: 'Share and dissect trading strategies and playbooks.',
-    icon: <FireIcon className="h-8 w-8 text-red-500" />,
-    link: '#',
-  },
-  {
-    name: 'Trader Psychology',
-    description: 'Discuss the mental game of trading, discipline, and risk.',
-    icon: <UserGroupIcon className="h-8 w-8 text-green-500" />,
-    link: '#',
-  },
-  {
-    name: 'Tools & Resources',
-    description: 'Talk about brokers, software, and other trading tools.',
-    icon: <RssIcon className="h-8 w-8 text-orange-500" />,
-    link: '#',
-  },
-  {
-    name: 'Platform Feedback',
-    description: 'Help us improve by providing feedback and suggestions.',
-    icon: <ShieldCheckIcon className="h-8 w-8 text-indigo-500" />,
-    link: '#',
-  },
-];
+// Helper to map category names to icons
+const iconMap: { [key: string]: React.ReactElement } = {
+  'Trade Journals': <StarIcon className="h-8 w-8 text-yellow-500" />,
+  'Market Discussions': <ChatBubbleLeftRightIcon className="h-8 w-8 text-sky-500" />,
+  'Strategies & Playbooks': <FireIcon className="h-8 w-8 text-red-500" />,
+  'Trader Psychology': <UserGroupIcon className="h-8 w-8 text-green-500" />,
+  'Tools & Resources': <RssIcon className="h-8 w-8 text-orange-500" />,
+  'Platform Feedback': <ShieldCheckIcon className="h-8 w-8 text-indigo-500" />,
+  'Default': <ShieldCheckIcon className="h-8 w-8 text-gray-500" />,
+};
+
+const getCategoryIcon = (categoryName: string) => {
+  return iconMap[categoryName] || iconMap['Default'];
+};
 
 const LeaderboardItem = ({ user, stat, rank }) => (
   <div className="flex items-center justify-between p-3 bg-gray-100 dark:bg-navy-800/50 rounded-lg">
@@ -54,6 +31,25 @@ const LeaderboardItem = ({ user, stat, rank }) => (
 );
 
 export default function CommunityPage() {
+  const [categories, setCategories] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const data = await getCommunityCategories();
+        setCategories(data);
+      } catch (err) {
+        setError('Failed to fetch community categories.');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchCategories();
+  }, []);
+
   return (
     <div className="bg-gray-50 forum-bg min-h-screen py-24">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -66,20 +62,24 @@ export default function CommunityPage() {
         <div className="mt-16 grid grid-cols-1 lg:grid-cols-3 gap-12">
           {/* Main Content: Categories */}
           <div className="lg:col-span-2">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {categories.map((category) => (
-                <a href={category.link} key={category.name} className="bg-white category-card-3d group p-8 rounded-2xl shadow-sm hover:shadow-xl transition-shadow duration-300 flex flex-col items-center text-center">
-                  <div className="flex items-center justify-center h-16 w-16 bg-gray-100 dark:bg-navy-800 rounded-full mb-4 group-hover:scale-110 transition-transform duration-300">
-                    {category.icon}
-                  </div>
-                  <h3 className="text-xl font-bold text-slate-800 dark:text-white mb-2">{category.name}</h3>
-                  <p className="text-gray-600 dark:text-gray-400 mb-4 flex-grow">{category.description}</p>
-                  <span className="font-semibold text-purple-600 dark:text-purple-400 group-hover:underline">
-                    View Discussions &rarr;
-                  </span>
-                </a>
-              ))}
-            </div>
+            {loading && <p>Loading categories...</p>}
+            {error && <p className="text-red-500">{error}</p>}
+            {!loading && !error && (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {categories.map((category: any) => (
+                  <a href={`/community/${category.slug}`} key={category.id} className="bg-white category-card-3d group p-8 rounded-2xl shadow-sm hover:shadow-xl transition-shadow duration-300 flex flex-col items-center text-center">
+                    <div className="flex items-center justify-center h-16 w-16 bg-gray-100 dark:bg-navy-800 rounded-full mb-4 group-hover:scale-110 transition-transform duration-300">
+                      {getCategoryIcon(category.name)}
+                    </div>
+                    <h3 className="text-xl font-bold text-slate-800 dark:text-white mb-2">{category.name}</h3>
+                    <p className="text-gray-600 dark:text-gray-400 mb-4 flex-grow">{category.description}</p>
+                    <span className="font-semibold text-purple-600 dark:text-purple-400 group-hover:underline">
+                      View Discussions &rarr;
+                    </span>
+                  </a>
+                ))}
+              </div>
+            )}
           </div>
 
           {/* Sidebar: Leaderboards & Stats */}
