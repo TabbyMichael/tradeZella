@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
 import Button from '../components/common/Button';
-
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+import { getUserTrades } from '../services/api';
 
 // Define a type for the trade object for type safety
 interface Trade {
@@ -32,16 +30,11 @@ const TradesPage: React.FC = () => {
           return;
         }
 
-        const response = await axios.get(`${API_BASE_URL}/api/trades`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-
-        setTrades(response.data);
+        const data = await getUserTrades(token);
+        setTrades(data);
         setError(null);
       } catch (err: any) {
-        setError(err.response?.data?.message || 'Failed to fetch trades.');
+        setError(err.message || 'Failed to fetch trades.');
       } finally {
         setLoading(false);
       }
