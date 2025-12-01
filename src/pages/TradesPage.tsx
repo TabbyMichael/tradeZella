@@ -4,6 +4,9 @@ import Button from '../components/common/Button';
 import CSVUploader from '../components/CSVUploader'; // Import the new component
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+import React, { useState, useEffect } from 'react';
+import Button from '../components/common/Button';
+import { getUserTrades } from '../services/api';
 
 // Define a type for the trade object for type safety
 interface Trade {
@@ -28,6 +31,23 @@ const TradesPage: React.FC = () => {
       const token = localStorage.getItem('token');
       if (!token) {
         setError('No authentication token found. Please log in.');
+  useEffect(() => {
+    const fetchTrades = async () => {
+      try {
+        setLoading(true);
+        const token = localStorage.getItem('token');
+        if (!token) {
+          setError('No authentication token found. Please log in.');
+          setLoading(false);
+          return;
+        }
+
+        const data = await getUserTrades(token);
+        setTrades(data);
+        setError(null);
+      } catch (err: any) {
+        setError(err.message || 'Failed to fetch trades.');
+      } finally {
         setLoading(false);
         return;
       }
