@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Notebook, LineChart, BarChart2, Play, RefreshCw, FileText } from 'lucide-react';
 import Button from './common/Button';
 import { motion } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
 
 const features = [
   { icon: Notebook, label: 'Journal' },
@@ -14,6 +15,7 @@ const features = [
 
 export default function Hero() {
   const [highlightedIndex, setHighlightedIndex] = useState(0);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -21,6 +23,15 @@ export default function Hero() {
     }, 2000);
     return () => clearInterval(interval);
   }, []);
+
+  const handleGetStarted = () => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      navigate('/');
+    } else {
+      navigate('/signup');
+    }
+  };
 
   return (
     <div className="pt-24 pb-16 bg-gradient-to-b from-white to-gray-50 dark:from-gray-900 dark:to-navy-900">
@@ -36,8 +47,8 @@ export default function Hero() {
             profitable trader with the power of journaling and analytics.
           </p>
           
-          <Button variant="gradient" className="mt-8 text-lg">
-            Get Started Now &gt;
+          <Button variant="gradient" className="mt-8 text-lg" onClick={handleGetStarted}>
+            {localStorage.getItem('token') ? 'Go to Dashboard' : 'Get Started Now'} &gt;
           </Button>
           
           <div className="mt-16 grid grid-cols-6 gap-8 justify-items-center">

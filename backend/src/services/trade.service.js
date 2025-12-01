@@ -97,4 +97,37 @@ export class TradeService {
       client.release();
     }
   }
+
+  static async createBulkTrades(trades) {
+    if (!trades || trades.length === 0) {
+      return [];
+    }
+
+    const client = await pool.connect();
+    try {
+      const values = [];
+      const queryParams = [];
+      let paramIndex = 1;
+
+      for (const trade of trades) {
+        const { userId, symbol, direction, size, entryPrice } = trade;
+        queryParams.push(`($${paramIndex++}, $${paramIndex++}, $${paramIndex++}, $${paramIndex++}, $${paramIndex++})`);
+        values.push(userId, symbol, direction, size, entryPrice);
+      }
+
+      const query = `
+        INSERT INTO trades (userId, symbol, direction, size, entryPrice)
+        VALUES ${queryParams.join(', ')}
+        RETURNING *
+      `;
+
+      const result = await client.query(query, values);
+      return result.rows;
+    } catch (error) {
+      console.error('Error creating bulk trades:', error);
+      throw error; // Re-throw the error so it can be caught by the controller's next(error)
+    } finally {
+      client.release();
+    }
+  }
 }

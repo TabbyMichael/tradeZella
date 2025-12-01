@@ -7,7 +7,7 @@ import { pool } from '../src/db.js';
  */
 export const generateTestToken = (user) => {
   return jwt.sign(
-    { id: user.id, email: user.email },
+    { userId: user.id, email: user.email }, // Changed 'id' to 'userId'
     process.env.JWT_SECRET || 'your_jwt_secret',
     { expiresIn: '1h' }
   );
@@ -16,10 +16,10 @@ export const generateTestToken = (user) => {
 /**
  * Create a test user in the database
  */
-export const createTestUser = async (userData) => {
+export const createTestUser = async (userData, client = pool) => {
   const hashedPassword = userData.password ? await bcrypt.hash(userData.password, 10) : null;
   
-  const result = await pool.query(
+  const result = await client.query(
     'INSERT INTO users (email, password, name, role) VALUES ($1, $2, $3, $4) RETURNING *',
     [userData.email, hashedPassword, userData.name, userData.role || 'user']
   );
@@ -72,13 +72,14 @@ export const createTestPost = async (postData) => {
 /**
  * Clear test data from database tables
  */
-export const clearTestData = async () => {
+export const clearTestData = async (client = pool) => {
   // Clear in reverse order to respect foreign key constraints
-  await pool.query('DELETE FROM posts');
-  await pool.query('DELETE FROM threads');
-  await pool.query('DELETE FROM categories');
-  await pool.query('DELETE FROM trades');
-  await pool.query('DELETE FROM users');
+  await client.query('DELETE FROM posts');
+  await client.query('DELETE FROM threads');
+  await client.query('DELETE FROM categories');
+  await client.query('DELETE FROM follows'); // Added this line
+  await client.query('DELETE FROM trades');
+  await client.query('DELETE FROM users');
 };
 
 /**
